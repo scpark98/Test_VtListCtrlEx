@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "afxcmn.h"
+//#include "afxcmn.h"
 
 #include <deque>
 
@@ -20,9 +20,6 @@ class Ctest_vtlistctrlexDlg : public CDialogEx
 // Construction
 public:
 	Ctest_vtlistctrlexDlg(CWnd* pParent = NULL);	// standard constructor
-
-													//This is the database we using
-	//std::deque<CListData> m_list_db;
 	CResizeCtrl		m_resize;
 
 	void			init_list(CVtListCtrlEx* plist);

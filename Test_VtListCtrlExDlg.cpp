@@ -117,7 +117,8 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	m_list_shell.set_shell_list();
 	m_list_shell.load_column_width(&theApp, _T("shell list"));
-	m_list_shell.set_path(_T("C:\\Users\\scpark\\Desktop"));
+	//m_list_shell.set_path(_T("C:\\Users\\scpark\\Desktop"));
+	m_list_shell.set_path(_T("d:\\"));
 
 	init_list(&m_list);
 
@@ -282,8 +283,8 @@ void Ctest_vtlistctrlexDlg::OnWindowPosChanged(WINDOWPOS* lpwndpos)
 	// TODO: Add your message handler code here
 	SaveWindowPosition(&theApp, this);
 
-	int items = m_list.GetCountPerPage();
-	SetWindowText(i2S(items));
+	//int items = m_list.GetCountPerPage();
+	//SetWindowText(i2S(items));
 }
 
 
@@ -292,9 +293,22 @@ void Ctest_vtlistctrlexDlg::OnLvnEndlabeleditList(NMHDR *pNMHDR, LRESULT *pResul
 	NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
 	// TODO: Add your control notification handler code here
 	//m_list.set_item_text(pDispInfo->item.iItem, pDispInfo->item.iSubItem, pDispInfo->item.pszText);
-	std::deque<int> *dqlist = m_list.get_selected_list_for_edit();
+	//std::deque<int> *dqlist = m_list.get_selected_list_for_edit();
 	//for (int i = 0; i < dqlist->size(); i++)
 	//	TRACE(_T("selected[%d] = %d\n"), i, dqlist->at(i));
+
+	int item = m_list.get_recent_edit_item();
+	int subItem = m_list.get_recent_edit_subitem();
+	CString	text = m_list.get_text(item, subItem);
+	CString oldfile;
+	CString newfile;
+
+	if (text != m_list.get_old_text())
+	{
+		oldfile.Format(_T("%ws\\%s"), m_list.get_text(item, subItem), m_list.get_old_text());
+		newfile.Format(_T("%ws\\%s"), m_list.get_text(item, subItem), text);
+	}
+
 	*pResult = 0;
 }
 
