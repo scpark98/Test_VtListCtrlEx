@@ -62,7 +62,12 @@ void Ctest_vtlistctrlexDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST, m_list);
-	DDX_Control(pDX, IDC_LIST_SHELL, m_list_shell);
+	DDX_Control(pDX, IDC_LIST_SHELL0, m_list_shell0);
+	DDX_Control(pDX, IDC_LIST_SHELL1, m_list_shell1);
+	DDX_Control(pDX, IDC_PATH0, m_path0);
+	DDX_Control(pDX, IDC_PATH1, m_path1);
+	DDX_Control(pDX, IDC_TREE0, m_tree0);
+	DDX_Control(pDX, IDC_TREE1, m_tree1);
 }
 
 BEGIN_MESSAGE_MAP(Ctest_vtlistctrlexDlg, CDialogEx)
@@ -73,7 +78,13 @@ BEGIN_MESSAGE_MAP(Ctest_vtlistctrlexDlg, CDialogEx)
 	ON_BN_CLICKED(IDCANCEL, &Ctest_vtlistctrlexDlg::OnBnClickedCancel)
 	ON_WM_ERASEBKGND()
 	ON_WM_WINDOWPOSCHANGED()
-	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_LIST, &Ctest_vtlistctrlexDlg::OnLvnEndlabeleditList)
+	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_LIST_SHELL0, &Ctest_vtlistctrlexDlg::OnLvnEndlabeleditListShell0)
+	ON_NOTIFY(LVN_KEYDOWN, IDC_LIST_SHELL0, &Ctest_vtlistctrlexDlg::OnLvnKeydownListShell0)
+	ON_NOTIFY(NM_RCLICK, IDC_LIST_SHELL0, &Ctest_vtlistctrlexDlg::OnNMRClickListShell0)
+	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SHELL0, &Ctest_vtlistctrlexDlg::OnNMDblclkListShell0)
+	ON_MESSAGE(MESSAGE_PATHCTRL, &Ctest_vtlistctrlexDlg::on_message_pathctrl)
+	ON_MESSAGE(MESSAGE_VTLISTCTRLEX, &Ctest_vtlistctrlexDlg::on_message_vtlistctrlex)
+	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SHELL1, &Ctest_vtlistctrlexDlg::OnNMDblclkListShell1)
 END_MESSAGE_MAP()
 
 
@@ -110,16 +121,72 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 	m_resize.Create(this);
-	m_resize.Add(IDC_LIST, 0, 0, 50, 100);
-	m_resize.Add(IDC_LIST_SHELL, 50, 0, 50, 100);
+
+	m_resize.Add(IDC_LIST, 0, 0, 0, 100);
+
+	m_resize.Add(IDC_PATH0, 0, 0, 50, 0);
+	m_resize.Add(IDC_TREE0, 0, 0, 25, 100);
+	m_resize.Add(IDC_LIST_SHELL0, 25, 0, 25, 100);
+
+	m_resize.Add(IDC_PATH1, 50, 0, 50, 0);
+	m_resize.Add(IDC_TREE1, 50, 0, 25, 100);
+	m_resize.Add(IDC_LIST_SHELL1, 75, 0, 25, 100);
 
 	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
 
-	m_list_shell.set_shell_list();
-	m_list_shell.load_column_width(&theApp, _T("shell list"));
-	//m_list_shell.set_path(_T("C:\\Users\\scpark\\Desktop"));
-	m_list_shell.set_path(_T("d:\\"));
+	//shelllist 초기설정
+	m_ShellImageList.Initialize();
 
+	//특수한 쉘폴더는 OS언어마다 모두 다르므로 현재 언어에 맞게 넣어주고 시작해야 한다.
+	//만약 Resource를 이용하여 다국어를 지원하려면 _T("내 PC")와 같이 주는 것이 아니라
+	//Resource의 StringTable에 정의되어 있는 LoadString(NFTD_IDS_COMPUTER)과 같이 줘야 한다.
+	m_ShellImageList.set_shell_known_string(CSIDL_DRIVES, _T("내 PC"));
+	m_ShellImageList.set_shell_known_string(CSIDL_PERSONAL, _T("문서"));
+	m_ShellImageList.set_shell_known_string(CSIDL_DESKTOP, _T("바탕 화면"));
+
+	m_tree0.set_as_shell_tree();
+	m_tree1.set_as_shell_tree();
+	m_tree0.SetCShellImageList(&m_ShellImageList);
+	m_tree1.SetCShellImageList(&m_ShellImageList);
+
+	m_list_shell0.set_as_shell_list();
+	m_list_shell0.SetCShellList(&m_ShellImageList);
+	m_list_shell0.use_drag_and_drop(true);
+	m_list_shell0.load_column_width(&theApp, _T("shell list0"));
+	m_list_shell0.set_path(_T("C:\\"));
+	m_list_shell0.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
+	//m_list_shell0.add_drag_images(IDB_DRAG_FOLDER, IDB_DRAG_MULTI_FILES);
+
+	m_list_shell1.set_as_shell_list();
+	m_list_shell1.SetCShellList(&m_ShellImageList);
+	m_list_shell1.use_drag_and_drop(true);
+	m_list_shell1.load_column_width(&theApp, _T("shell list1"));
+	m_list_shell1.set_path(_T("d:\\"));
+	m_list_shell1.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
+	//m_list_shell1.add_drag_images(IDB_DRAG_FOLDER, IDB_DRAG_MULTI_FILES);
+
+	m_path0.SetCShellList(&m_ShellImageList);
+	m_path0.set_path(_T("C:\\"));
+
+	m_path1.SetCShellList(&m_ShellImageList);
+	m_path1.set_path(_T("D:\\"));
+
+	//for test
+	//m_path.add_remote_drive_volume(_T("로컬 디스크 (C:)"));
+
+	//m_path.back_color(lightblue);
+	//m_list_shell.set_path(_T("d:\\"));
+
+	//CRect r(500, 20, 1500, 1000);
+	//m_plist_shell = new CVtListCtrlEx();
+	//m_plist_shell->Create(WS_CHILD | WS_BORDER | WS_VISIBLE, r, this, 7723);
+	////DWORD dwStyle = m_plist_shell->GetStyle() & LVS_TYPEMASK;
+	////m_plist_shell->ModifyStyle(LVS_TYPEMASK, dwStyle | LVS_REPORT | LVS_OWNERDRAWFIXED | LVS_OWNERDATA);
+	//m_plist_shell->set_shell_list();
+	//m_plist_shell->set_path(_T("C:\\"));
+
+
+	//일반 ListCtrl의 초기설정
 	init_list(&m_list);
 
 	RestoreWindowPosition(&theApp, this);
@@ -213,15 +280,13 @@ void Ctest_vtlistctrlexDlg::OnPaint()
 	}
 	else
 	{
-		CDialogEx::OnPaint();
-		return;
 		CPaintDC dc1(this);
 		CRect rc;
 
 		GetClientRect(rc);
-		CMemoryDC dc(&dc1, &rc, true);
+		CMemoryDC dc(&dc1, &rc, false);
 
-		dc.FillSolidRect(rc, ::GetSysColor(COLOR_3DFACE));
+		//dc.FillSolidRect(rc, RGB(64, 64, 64));// ::GetSysColor(COLOR_3DFACE));
 	}
 }
 
@@ -261,7 +326,7 @@ void Ctest_vtlistctrlexDlg::OnBnClickedCancel()
 {
 	// TODO: Add your control notification handler code here
 	m_list.save_column_width(&theApp, _T("list name"));
-	m_list_shell.save_column_width(&theApp, _T("shell list"));
+	m_list_shell0.save_column_width(&theApp, _T("shell list0"));
 
 	CDialogEx::OnCancel();
 }
@@ -271,7 +336,7 @@ void Ctest_vtlistctrlexDlg::OnBnClickedCancel()
 BOOL Ctest_vtlistctrlexDlg::OnEraseBkgnd(CDC* pDC)
 {
 	// TODO: Add your message handler code here and/or call default
-	//return false;
+	return false;
 	return CDialogEx::OnEraseBkgnd(pDC);
 }
 
@@ -288,34 +353,56 @@ void Ctest_vtlistctrlexDlg::OnWindowPosChanged(WINDOWPOS* lpwndpos)
 }
 
 
-void Ctest_vtlistctrlexDlg::OnLvnEndlabeleditList(NMHDR *pNMHDR, LRESULT *pResult)
+void Ctest_vtlistctrlexDlg::OnLvnEndlabeleditListShell0(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
-	// TODO: Add your control notification handler code here
-	//m_list.set_item_text(pDispInfo->item.iItem, pDispInfo->item.iSubItem, pDispInfo->item.pszText);
-	//std::deque<int> *dqlist = m_list.get_selected_list_for_edit();
-	//for (int i = 0; i < dqlist->size(); i++)
-	//	TRACE(_T("selected[%d] = %d\n"), i, dqlist->at(i));
+	NMLVDISPINFO* pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 
-	int item = m_list.get_recent_edit_item();
-	int subItem = m_list.get_recent_edit_subitem();
-	CString	text = m_list.get_text(item, subItem);
+	int item = m_list_shell0.get_recent_edit_item();
+	int subItem = m_list_shell0.get_recent_edit_subitem();
+	CString	text = m_list_shell0.get_text(item, subItem);
+	CString oldtext = m_list_shell0.get_old_text();
 	CString oldfile;
 	CString newfile;
 
-	if (text != m_list.get_old_text())
-	{
-		oldfile.Format(_T("%ws\\%s"), m_list.get_text(item, subItem), m_list.get_old_text());
-		newfile.Format(_T("%ws\\%s"), m_list.get_text(item, subItem), text);
+	//변경된 내용이 없으면 리턴.
+	if (text == oldtext)
+		return;
+
+	//파일명 외에는 변경할 수 없게 세팅되어 있으므로 굳이 체크하지 않아도 된다.
+	//if (subItem != CVtListCtrlEx::col_filename)
+	//	return;
+
+	if (m_list_shell0.is_shell_list())
+	{ 
+		oldfile.Format(_T("%ws\\%s"), m_list_shell0.get_path(), m_list_shell0.get_old_text());
+		newfile.Format(_T("%ws\\%s"), m_list_shell0.get_path(), text);
+
+		//local이면 직접 파일명을 rename하고
+		if (m_list_shell0.is_shell_list_local())
+		{
+			if (!MoveFile(oldfile, newfile))
+			{
+				get_last_error_message(true);
+				m_list_shell0.set_text(item, subItem, oldtext);
+				return;
+			}
+		}
+		//remote라면 그 명령을 remote에 전달한다.
+		else
+		{
+
+		}
 	}
+
 
 	*pResult = 0;
 }
 
-
 BOOL Ctest_vtlistctrlexDlg::PreTranslateMessage(MSG* pMsg)
 {
 	// TODO: Add your specialized code here and/or call the base class
+	/*
 	if (pMsg->message == WM_KEYDOWN)
 	{
 		switch (pMsg->wParam)
@@ -326,10 +413,173 @@ BOOL Ctest_vtlistctrlexDlg::PreTranslateMessage(MSG* pMsg)
 			m_list.delete_selected_items();
 			break;
 		case VK_ADD :
-			m_list.add_item(i2S(m_list.GetItemCount()));
+			//m_list.add_item(i2S(m_list.GetItemCount()));
 			return true;
 		}
 	}
+	*/
 
 	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+
+
+void Ctest_vtlistctrlexDlg::OnLvnKeydownListShell0(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMLVKEYDOWN pLVKeyDown = reinterpret_cast<LPNMLVKEYDOWN>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (pLVKeyDown->wVKey == VK_DELETE)
+	{
+		CString str;
+		CString file;
+		std::deque<int> dqSelected;
+
+		m_list_shell0.get_selected_items(&dqSelected);
+
+		if (dqSelected.size() == 1)
+			str.Format(_T("선택된 항목을 삭제할까요?"));
+		else
+			str.Format(_T("선택된 %d개의 항목을 삭제할까요?"), dqSelected.size());
+
+		if (AfxMessageBox(str, MB_ICONQUESTION | MB_YESNO) == IDNO)
+			return;
+
+		//file.Format(_T("%s\\%s"), m_list_shell.get_path(), )
+		//local이라면 파일 삭제, 리스트 삭제하면 되고
+		if (m_list_shell0.is_shell_list_local())
+		{
+			m_list_shell0.delete_selected_items();
+		}
+		//remote라면 삭제 명령을 전달한다.
+		else
+		{
+
+		}
+	}
+
+	*pResult = 0;
+}
+
+
+void Ctest_vtlistctrlexDlg::OnNMRClickListShell0(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	*pResult = 0;
+}
+
+
+void Ctest_vtlistctrlexDlg::OnNMDblclkListShell0(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	int index = m_list_shell0.get_selected_index();
+	
+	if (index < 0 || index >= m_list_shell0.size())
+		return;
+
+	if (m_list_shell0.is_shell_list())
+	{
+		if (m_list_shell0.is_shell_list_local())
+		{
+			CString new_path;
+			int csidl = m_ShellImageList.get_csidl_by_shell_known_string(m_list_shell0.get_path());
+			if (csidl == CSIDL_DRIVES)
+			{
+				new_path = convert_special_folder_to_real_path(m_list_shell0.get_text(index, CVtListCtrlEx::col_filename));
+				m_list_shell0.set_path(new_path);
+				m_path0.set_path(new_path);
+			}
+			else
+			{
+				new_path = m_list_shell0.get_path() + _T("\\") + m_list_shell0.get_text(index, CVtListCtrlEx::col_filename);
+				if (PathIsDirectory(new_path))
+				{
+					m_list_shell0.set_path(new_path);
+					m_path0.set_path(new_path);
+				}
+			}
+		}
+	}
+
+	*pResult = 0;
+}
+
+
+void Ctest_vtlistctrlexDlg::OnNMDblclkListShell1(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	int index = m_list_shell1.get_selected_index();
+
+	if (index < 0 || index >= m_list_shell1.size())
+		return;
+
+	if (m_list_shell1.is_shell_list())
+	{
+		if (m_list_shell1.is_shell_list_local())
+		{
+			CString new_path;
+			int csidl = m_ShellImageList.get_csidl_by_shell_known_string(m_list_shell1.get_path());
+			if (csidl == CSIDL_DRIVES)
+			{
+				new_path = convert_special_folder_to_real_path(m_list_shell1.get_text(index, CVtListCtrlEx::col_filename));
+				m_list_shell1.set_path(new_path);
+				m_path1.set_path(new_path);
+			}
+			else
+			{
+				new_path = m_list_shell1.get_path() + _T("\\") + m_list_shell1.get_text(index, CVtListCtrlEx::col_filename);
+				if (PathIsDirectory(new_path))
+				{
+					m_list_shell1.set_path(new_path);
+					m_path1.set_path(new_path);
+				}
+			}
+		}
+	}
+
+	*pResult = 0;
+}
+
+LRESULT	Ctest_vtlistctrlexDlg::on_message_pathctrl(WPARAM wParam, LPARAM lParam)
+{
+	CPathCtrlMessage* pMsg = (CPathCtrlMessage*)wParam;
+
+	if (pMsg->pThis == &m_path0)
+	{
+		trace(_T("on_message_pathctrl from m_path0\n"));
+		m_list_shell0.set_path(pMsg->cur_path);// m_path0.get_full_path());
+	}
+	else if (pMsg->pThis == &m_path1)
+	{
+		trace(_T("on_message_pathctrl from m_path1\n"));
+		m_list_shell1.set_path(pMsg->cur_path);// m_path0.get_full_path());
+	}
+
+	return 0;
+}
+
+LRESULT	Ctest_vtlistctrlexDlg::on_message_vtlistctrlex(WPARAM wParam, LPARAM lParam)
+{
+	CVtListCtrlExMessage* msg = (CVtListCtrlExMessage*)wParam;
+
+	CVtListCtrlEx* pDragListCtrl = (CVtListCtrlEx*)msg->pThis;
+	CVtListCtrlEx* pDropListCtrl = (CVtListCtrlEx*)msg->pTarget;
+
+	int droppedIndex = pDragListCtrl->get_drop_index();
+	CString droppedItem;
+	
+	if (droppedIndex >= 0)
+		droppedItem = pDropListCtrl->get_text(droppedIndex, CVtListCtrlEx::col_filename);
+
+	std::deque<int> dq;
+	pDragListCtrl->get_selected_items(&dq);
+
+	for (int i = 0; i < dq.size(); i++)
+		TRACE(_T("dropped src %d = %s\n"), i, pDragListCtrl->get_text(dq[i], CVtListCtrlEx::col_filename));
+
+	TRACE(_T("dropped on = %s\n"), droppedItem);
+
+	return 0;
 }

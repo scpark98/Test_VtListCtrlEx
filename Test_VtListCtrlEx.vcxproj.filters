@@ -66,6 +66,21 @@
     <ClInclude Include="..\..\Common\CListCtrl\CVtListCtrlEx\EditCell.h">
       <Filter>Common\VtListCtrlEx</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Common\CListBox\ColorListBox\ColorListBox.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\CStatic\PathCtrl\PathCtrl.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\GdiPlusBitmap.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\CTreeCtrl\TreeCtrlEx.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\system\ShellImageList\ShellImageList.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Test_VtListCtrlEx.cpp">
@@ -104,6 +119,21 @@
     <ClCompile Include="..\..\Common\CListCtrl\CVtListCtrlEx\EditCell.cpp">
       <Filter>Common\VtListCtrlEx</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Common\CListBox\ColorListBox\ColorListBox.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\CStatic\PathCtrl\PathCtrl.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\GdiPlusBitmap.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\CTreeCtrl\TreeCtrlEx.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\system\ShellImageList\ShellImageList.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="test_vtlistctrlex.rc">
@@ -117,6 +147,21 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\test_vtlistctrlex.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\AnySupport\FileTransfer\File Transfer\nFTDServer\res\Icon\IDP_ICO_DRAG_FILE.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\drag.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\drag folder.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\drag_multi_files.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\drag_one_file.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

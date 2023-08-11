@@ -12,7 +12,10 @@
 #include "../../Common/Functions.h"
 #include "../../Common/MemoryDC.h"
 #include "../../Common/ResizeCtrl.h"
+#include "../../Common/CTreeCtrl/TreeCtrlEx.h"
 #include "../../Common/CListCtrl/CVtListCtrlEx/VtListCtrlEx.h"
+#include "../../Common/CStatic/PathCtrl/PathCtrl.h"
+#include "../../Common/system/ShellImageList/ShellImageList.h"
 
 // Ctest_vtlistctrlexDlg dialog
 class Ctest_vtlistctrlexDlg : public CDialogEx
@@ -21,6 +24,8 @@ class Ctest_vtlistctrlexDlg : public CDialogEx
 public:
 	Ctest_vtlistctrlexDlg(CWnd* pParent = NULL);	// standard constructor
 	CResizeCtrl		m_resize;
+
+	CVtListCtrlEx*	m_plist_shell = NULL;
 
 	void			init_list(CVtListCtrlEx* plist);
 
@@ -32,6 +37,12 @@ public:
 		list_score,
 		list_memo,
 	};
+
+	LRESULT			on_message_vtlistctrlex(WPARAM wParam, LPARAM lParam);
+	LRESULT			on_message_pathctrl(WPARAM wParam, LPARAM lParam);
+
+	//Shell의 imagelist 및 shell과 관계된 멤버 제공
+	CShellImageList		m_ShellImageList;
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -55,10 +66,21 @@ protected:
 public:
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedCancel();
+	CPathCtrl m_path0;
+	CPathCtrl m_path1;
 	CVtListCtrlEx m_list;
-	CVtListCtrlEx m_list_shell;
+	CTreeCtrlEx m_tree0;
+	CTreeCtrlEx m_tree1;
+	CVtListCtrlEx m_list_shell0;
+	CVtListCtrlEx m_list_shell1;
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnWindowPosChanged(WINDOWPOS* lpwndpos);
-	afx_msg void OnLvnEndlabeleditList(NMHDR *pNMHDR, LRESULT *pResult);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnLvnEndlabeleditListShell0(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnLvnKeydownListShell0(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMRClickListShell0(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMDblclkListShell0(NMHDR* pNMHDR, LRESULT* pResult);
+	//afx_msg void OnLvnBegindragListShell0(NMHDR* pNMHDR, LRESULT* pResult);
+	//afx_msg void OnLvnBegindragListShell1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMDblclkListShell1(NMHDR* pNMHDR, LRESULT* pResult);
 };
