@@ -84,6 +84,7 @@ BEGIN_MESSAGE_MAP(Ctest_vtlistctrlexDlg, CDialogEx)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SHELL0, &Ctest_vtlistctrlexDlg::OnNMDblclkListShell0)
 	ON_MESSAGE(MESSAGE_PATHCTRL, &Ctest_vtlistctrlexDlg::on_message_pathctrl)
 	ON_MESSAGE(MESSAGE_VTLISTCTRLEX, &Ctest_vtlistctrlexDlg::on_message_vtlistctrlex)
+	ON_MESSAGE(MESSAGE_TREECTRLEX, &Ctest_vtlistctrlexDlg::on_message_treectrlex)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SHELL1, &Ctest_vtlistctrlexDlg::OnNMDblclkListShell1)
 END_MESSAGE_MAP()
 
@@ -125,12 +126,12 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_resize.Add(IDC_LIST, 0, 0, 0, 100);
 
 	m_resize.Add(IDC_PATH0, 0, 0, 50, 0);
-	m_resize.Add(IDC_TREE0, 0, 0, 25, 100);
-	m_resize.Add(IDC_LIST_SHELL0, 25, 0, 25, 100);
+	m_resize.Add(IDC_TREE0, 0, 0, 10, 100);
+	m_resize.Add(IDC_LIST_SHELL0, 10, 0, 40, 100);
 
 	m_resize.Add(IDC_PATH1, 50, 0, 50, 0);
-	m_resize.Add(IDC_TREE1, 50, 0, 25, 100);
-	m_resize.Add(IDC_LIST_SHELL1, 75, 0, 25, 100);
+	m_resize.Add(IDC_TREE1, 50, 0, 10, 100);
+	m_resize.Add(IDC_LIST_SHELL1, 60, 0, 40, 100);
 
 	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
 
@@ -144,31 +145,31 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_ShellImageList.set_shell_known_string(CSIDL_PERSONAL, _T("문서"));
 	m_ShellImageList.set_shell_known_string(CSIDL_DESKTOP, _T("바탕 화면"));
 
-	m_tree0.set_as_shell_tree();
-	m_tree1.set_as_shell_tree();
-	m_tree0.SetCShellImageList(&m_ShellImageList);
-	m_tree1.SetCShellImageList(&m_ShellImageList);
+	m_tree0.set_shell_imagelist(&m_ShellImageList);
+	m_tree1.set_shell_imagelist(&m_ShellImageList);
+	m_tree0.set_as_shell_treectrl();
+	m_tree1.set_as_shell_treectrl();
 
-	m_list_shell0.set_as_shell_list();
-	m_list_shell0.SetCShellList(&m_ShellImageList);
+	m_list_shell0.set_as_shell_listctrl();
+	m_list_shell0.set_shell_imagelist(&m_ShellImageList);
 	m_list_shell0.use_drag_and_drop(true);
 	m_list_shell0.load_column_width(&theApp, _T("shell list0"));
 	m_list_shell0.set_path(_T("C:\\"));
 	m_list_shell0.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
 	//m_list_shell0.add_drag_images(IDB_DRAG_FOLDER, IDB_DRAG_MULTI_FILES);
 
-	m_list_shell1.set_as_shell_list();
-	m_list_shell1.SetCShellList(&m_ShellImageList);
+	m_list_shell1.set_as_shell_listctrl();
+	m_list_shell1.set_shell_imagelist(&m_ShellImageList);
 	m_list_shell1.use_drag_and_drop(true);
 	m_list_shell1.load_column_width(&theApp, _T("shell list1"));
 	m_list_shell1.set_path(_T("d:\\"));
 	m_list_shell1.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
 	//m_list_shell1.add_drag_images(IDB_DRAG_FOLDER, IDB_DRAG_MULTI_FILES);
 
-	m_path0.SetCShellList(&m_ShellImageList);
+	m_path0.set_shell_imagelist(&m_ShellImageList);
 	m_path0.set_path(_T("C:\\"));
 
-	m_path1.SetCShellList(&m_ShellImageList);
+	m_path1.set_shell_imagelist(&m_ShellImageList);
 	m_path1.set_path(_T("D:\\"));
 
 	//for test
@@ -373,13 +374,13 @@ void Ctest_vtlistctrlexDlg::OnLvnEndlabeleditListShell0(NMHDR* pNMHDR, LRESULT* 
 	//if (subItem != CVtListCtrlEx::col_filename)
 	//	return;
 
-	if (m_list_shell0.is_shell_list())
+	if (m_list_shell0.is_shell_listctrl())
 	{ 
 		oldfile.Format(_T("%ws\\%s"), m_list_shell0.get_path(), m_list_shell0.get_old_text());
 		newfile.Format(_T("%ws\\%s"), m_list_shell0.get_path(), text);
 
 		//local이면 직접 파일명을 rename하고
-		if (m_list_shell0.is_shell_list_local())
+		if (m_list_shell0.is_shell_listctrl_local())
 		{
 			if (!MoveFile(oldfile, newfile))
 			{
@@ -446,7 +447,7 @@ void Ctest_vtlistctrlexDlg::OnLvnKeydownListShell0(NMHDR* pNMHDR, LRESULT* pResu
 
 		//file.Format(_T("%s\\%s"), m_list_shell.get_path(), )
 		//local이라면 파일 삭제, 리스트 삭제하면 되고
-		if (m_list_shell0.is_shell_list_local())
+		if (m_list_shell0.is_shell_listctrl_local())
 		{
 			m_list_shell0.delete_selected_items();
 		}
@@ -478,9 +479,9 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell0(NMHDR* pNMHDR, LRESULT* pResult
 	if (index < 0 || index >= m_list_shell0.size())
 		return;
 
-	if (m_list_shell0.is_shell_list())
+	if (m_list_shell0.is_shell_listctrl())
 	{
-		if (m_list_shell0.is_shell_list_local())
+		if (m_list_shell0.is_shell_listctrl_local())
 		{
 			CString new_path;
 			int csidl = m_ShellImageList.get_csidl_by_shell_known_string(m_list_shell0.get_path());
@@ -515,9 +516,9 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell1(NMHDR* pNMHDR, LRESULT* pResult
 	if (index < 0 || index >= m_list_shell1.size())
 		return;
 
-	if (m_list_shell1.is_shell_list())
+	if (m_list_shell1.is_shell_listctrl())
 	{
-		if (m_list_shell1.is_shell_list_local())
+		if (m_list_shell1.is_shell_listctrl_local())
 		{
 			CString new_path;
 			int csidl = m_ShellImageList.get_csidl_by_shell_known_string(m_list_shell1.get_path());
@@ -549,12 +550,18 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_pathctrl(WPARAM wParam, LPARAM lParam)
 	if (pMsg->pThis == &m_path0)
 	{
 		trace(_T("on_message_pathctrl from m_path0\n"));
-		m_list_shell0.set_path(pMsg->cur_path);// m_path0.get_full_path());
+		if (pMsg->message == CPathCtrl::message_pathctrl_path_changed)
+		{
+			m_list_shell0.set_path(pMsg->cur_path);// m_path0.get_full_path());
+		}
 	}
 	else if (pMsg->pThis == &m_path1)
 	{
 		trace(_T("on_message_pathctrl from m_path1\n"));
-		m_list_shell1.set_path(pMsg->cur_path);// m_path0.get_full_path());
+		if (pMsg->message == CPathCtrl::message_pathctrl_path_changed)
+		{
+			m_list_shell1.set_path(pMsg->cur_path);// m_path1.get_full_path());
+		}
 	}
 
 	return 0;
@@ -580,6 +587,31 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_vtlistctrlex(WPARAM wParam, LPARAM lPa
 		TRACE(_T("dropped src %d = %s\n"), i, pDragListCtrl->get_text(dq[i], CVtListCtrlEx::col_filename));
 
 	TRACE(_T("dropped on = %s\n"), droppedItem);
+
+	return 0;
+}
+
+LRESULT	Ctest_vtlistctrlexDlg::on_message_treectrlex(WPARAM wParam, LPARAM lParam)
+{
+	CTreeCtrlExMessage* msg = (CTreeCtrlExMessage*)wParam;
+	CString path = *(CString*)lParam;
+
+	if (msg->pThis == &m_tree0)
+	{
+		if (msg->message == CTreeCtrlEx::message_selchanged)
+		{
+			m_list_shell0.set_path(path);
+			m_path0.set_path(path);
+		}
+	}
+	else if (msg->pThis == &m_tree1)
+	{
+		if (msg->message == CTreeCtrlEx::message_selchanged)
+		{
+			m_list_shell1.set_path(path);
+			m_path1.set_path(path);
+		}
+	}
 
 	return 0;
 }

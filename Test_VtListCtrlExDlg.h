@@ -40,6 +40,7 @@ public:
 
 	LRESULT			on_message_vtlistctrlex(WPARAM wParam, LPARAM lParam);
 	LRESULT			on_message_pathctrl(WPARAM wParam, LPARAM lParam);
+	LRESULT			on_message_treectrlex(WPARAM wParam, LPARAM lParam);
 
 	//Shell의 imagelist 및 shell과 관계된 멤버 제공
 	CShellImageList		m_ShellImageList;
