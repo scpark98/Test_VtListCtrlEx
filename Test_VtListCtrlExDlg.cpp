@@ -149,6 +149,8 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_tree1.set_shell_imagelist(&m_ShellImageList);
 	m_tree0.set_as_shell_treectrl();
 	m_tree1.set_as_shell_treectrl();
+	m_tree0.select_item(_T("C:\\"));
+	m_tree1.select_item(_T("d:\\"));
 
 	m_list_shell0.set_as_shell_listctrl();
 	m_list_shell0.set_shell_imagelist(&m_ShellImageList);
@@ -191,6 +193,8 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	init_list(&m_list);
 
 	RestoreWindowPosition(&theApp, this);
+
+	m_tree0.iterate_tree_with_no_recursion();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -302,7 +306,9 @@ HCURSOR Ctest_vtlistctrlexDlg::OnQueryDragIcon()
 
 void Ctest_vtlistctrlexDlg::OnBnClickedOk()
 {
-	m_list.set_line_height(40);
+	//m_tree0.iterate_tree_with_no_recursion();
+	m_tree0.iterate_tree();
+	//m_list.set_line_height(40);
 	//m_list.set_header_height(20);
 
 	//m_list.random();
@@ -487,9 +493,11 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell0(NMHDR* pNMHDR, LRESULT* pResult
 			int csidl = m_ShellImageList.get_csidl_by_shell_known_string(m_list_shell0.get_path());
 			if (csidl == CSIDL_DRIVES)
 			{
-				new_path = convert_special_folder_to_real_path(m_list_shell0.get_text(index, CVtListCtrlEx::col_filename));
+				new_path = convert_special_folder_to_real_path(m_list_shell0.get_text(index, CVtListCtrlEx::col_filename),
+																m_ShellImageList.get_csidl_map());
 				m_list_shell0.set_path(new_path);
 				m_path0.set_path(new_path);
+				m_tree0.select_item(new_path);
 			}
 			else
 			{
@@ -498,6 +506,7 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell0(NMHDR* pNMHDR, LRESULT* pResult
 				{
 					m_list_shell0.set_path(new_path);
 					m_path0.set_path(new_path);
+					m_tree0.select_item(new_path);
 				}
 			}
 		}
@@ -524,9 +533,11 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell1(NMHDR* pNMHDR, LRESULT* pResult
 			int csidl = m_ShellImageList.get_csidl_by_shell_known_string(m_list_shell1.get_path());
 			if (csidl == CSIDL_DRIVES)
 			{
-				new_path = convert_special_folder_to_real_path(m_list_shell1.get_text(index, CVtListCtrlEx::col_filename));
+				new_path = convert_special_folder_to_real_path(m_list_shell1.get_text(index, CVtListCtrlEx::col_filename),
+																m_ShellImageList.get_csidl_map());
 				m_list_shell1.set_path(new_path);
 				m_path1.set_path(new_path);
+				m_tree1.select_item(new_path);
 			}
 			else
 			{
@@ -535,6 +546,7 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell1(NMHDR* pNMHDR, LRESULT* pResult
 				{
 					m_list_shell1.set_path(new_path);
 					m_path1.set_path(new_path);
+					m_tree1.select_item(new_path);
 				}
 			}
 		}
@@ -553,6 +565,7 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_pathctrl(WPARAM wParam, LPARAM lParam)
 		if (pMsg->message == CPathCtrl::message_pathctrl_path_changed)
 		{
 			m_list_shell0.set_path(pMsg->cur_path);// m_path0.get_full_path());
+			m_tree0.select_item(pMsg->cur_path);
 		}
 	}
 	else if (pMsg->pThis == &m_path1)
@@ -561,6 +574,7 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_pathctrl(WPARAM wParam, LPARAM lParam)
 		if (pMsg->message == CPathCtrl::message_pathctrl_path_changed)
 		{
 			m_list_shell1.set_path(pMsg->cur_path);// m_path1.get_full_path());
+			m_tree1.select_item(pMsg->cur_path);
 		}
 	}
 
