@@ -133,6 +133,9 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_resize.Add(IDC_TREE1, 50, 0, 10, 100);
 	m_resize.Add(IDC_LIST_SHELL1, 60, 0, 40, 100);
 
+	m_tooltip.Create(this);// , TTS_ALWAYSTIP | TTS_NOPREFIX | TTS_NOANIMATE);
+	m_tooltip.AddTool(GetDlgItem(IDC_BUTTON1), _T("test"));
+
 	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
 
 	//shelllist 초기설정
@@ -408,7 +411,27 @@ void Ctest_vtlistctrlexDlg::OnLvnEndlabeleditListShell0(NMHDR* pNMHDR, LRESULT* 
 
 BOOL Ctest_vtlistctrlexDlg::PreTranslateMessage(MSG* pMsg)
 {
-	// TODO: Add your specialized code here and/or call the base class
+	//이 코드를 넣어줘야 disabled에서도 툴팁이 동작하는데
+	//이 코드를 컨트롤 클래스에 넣어줘도 소용없다.
+	//이 코드는 main에 있어야 한다.
+	//disabled가 아닌 경우는 잘 표시된다.
+	if (m_tooltip.m_hWnd)
+	{
+		//msg를 따로 선언해서 사용하지 않고 *pMsg를 그대로 이용하면 이상한 현상이 발생한다.
+		MSG msg = *pMsg;
+		msg.hwnd = (HWND)m_tooltip.SendMessage(TTM_WINDOWFROMPOINT, 0, (LPARAM) & (msg.pt));
+
+		CPoint pt = msg.pt;
+
+		if (msg.message >= WM_MOUSEFIRST && msg.message <= WM_MOUSELAST)
+			::ScreenToClient(msg.hwnd, &pt);
+
+		msg.lParam = MAKELONG(pt.x, pt.y);
+
+		// relay mouse event before deleting old tool 
+		m_tooltip.SendMessage(TTM_RELAYEVENT, 0, (LPARAM)&msg);
+	}
+
 	/*
 	if (pMsg->message == WM_KEYDOWN)
 	{

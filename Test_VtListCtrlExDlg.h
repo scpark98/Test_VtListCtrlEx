@@ -45,6 +45,9 @@ public:
 	//Shell의 imagelist 및 shell과 관계된 멤버 제공
 	CShellImageList		m_ShellImageList;
 
+protected:
+	CToolTipCtrl	m_tooltip;
+
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_TEST_VTLISTCTRLEX_DIALOG };
