@@ -68,6 +68,7 @@ void Ctest_vtlistctrlexDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PATH1, m_path1);
 	DDX_Control(pDX, IDC_TREE0, m_tree0);
 	DDX_Control(pDX, IDC_TREE1, m_tree1);
+	DDX_Control(pDX, IDC_COMBO_COLOR_THEME, m_combo_color_theme);
 }
 
 BEGIN_MESSAGE_MAP(Ctest_vtlistctrlexDlg, CDialogEx)
@@ -86,6 +87,7 @@ BEGIN_MESSAGE_MAP(Ctest_vtlistctrlexDlg, CDialogEx)
 	ON_MESSAGE(MESSAGE_VTLISTCTRLEX, &Ctest_vtlistctrlexDlg::on_message_vtlistctrlex)
 	ON_MESSAGE(MESSAGE_TREECTRLEX, &Ctest_vtlistctrlexDlg::on_message_treectrlex)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SHELL1, &Ctest_vtlistctrlexDlg::OnNMDblclkListShell1)
+	ON_CBN_SELCHANGE(IDC_COMBO_COLOR_THEME, &Ctest_vtlistctrlexDlg::OnCbnSelchangeComboColorTheme)
 END_MESSAGE_MAP()
 
 
@@ -133,12 +135,19 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_resize.Add(IDC_TREE1, 50, 0, 10, 100);
 	m_resize.Add(IDC_LIST_SHELL1, 60, 0, 40, 100);
 
+	m_combo_color_theme.AddString(_T("color_theme_default"));
+	m_combo_color_theme.AddString(_T("color_theme_light_blue"));
+	m_combo_color_theme.AddString(_T("color_theme_navy_blue"));
+	m_combo_color_theme.AddString(_T("color_theme_dark_blue"));
+	m_combo_color_theme.AddString(_T("color_theme_dark_gray"));
+
+	m_combo_color_theme.SetCurSel(0);
+
 	m_tooltip.Create(this);// , TTS_ALWAYSTIP | TTS_NOPREFIX | TTS_NOANIMATE);
-	m_tooltip.AddTool(GetDlgItem(IDC_BUTTON1), _T("test"));
 
 	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
 
-	//shelllist 초기설정
+	//shellimagelist 초기설정
 	m_ShellImageList.Initialize();
 
 	//특수한 쉘폴더는 OS언어마다 모두 다르므로 현재 언어에 맞게 넣어주고 시작해야 한다.
@@ -161,7 +170,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_list_shell0.load_column_width(&theApp, _T("shell list0"));
 	m_list_shell0.set_path(_T("C:\\"));
 	m_list_shell0.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
-	//m_list_shell0.add_drag_images(IDB_DRAG_FOLDER, IDB_DRAG_MULTI_FILES);
+
 
 	m_list_shell1.set_as_shell_listctrl();
 	m_list_shell1.set_shell_imagelist(&m_ShellImageList);
@@ -169,7 +178,6 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_list_shell1.load_column_width(&theApp, _T("shell list1"));
 	m_list_shell1.set_path(_T("d:\\"));
 	m_list_shell1.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
-	//m_list_shell1.add_drag_images(IDB_DRAG_FOLDER, IDB_DRAG_MULTI_FILES);
 
 	m_path0.set_shell_imagelist(&m_ShellImageList);
 	m_path0.set_path(_T("C:\\"));
@@ -608,22 +616,46 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_vtlistctrlex(WPARAM wParam, LPARAM lPa
 {
 	CVtListCtrlExMessage* msg = (CVtListCtrlExMessage*)wParam;
 
-	CVtListCtrlEx* pDragListCtrl = (CVtListCtrlEx*)msg->pThis;
-	CVtListCtrlEx* pDropListCtrl = (CVtListCtrlEx*)msg->pTarget;
+	if (msg->message == CVtListCtrlEx::message_drag_and_dropped)
+	{
+		CString droppedItem;
+		CVtListCtrlEx* pDragListCtrl = (CVtListCtrlEx*)msg->pThis;
 
-	int droppedIndex = pDragListCtrl->get_drop_index();
-	CString droppedItem;
-	
-	if (droppedIndex >= 0)
-		droppedItem = pDropListCtrl->get_text(droppedIndex, CVtListCtrlEx::col_filename);
+		if (msg->pTarget->IsKindOf(RUNTIME_CLASS(CListCtrl)))
+		{
+			CVtListCtrlEx* pDropListCtrl = (CVtListCtrlEx*)msg->pTarget;
 
-	std::deque<int> dq;
-	pDragListCtrl->get_selected_items(&dq);
+			int droppedIndex = pDragListCtrl->get_drop_index();
 
-	for (int i = 0; i < dq.size(); i++)
-		TRACE(_T("dropped src %d = %s\n"), i, pDragListCtrl->get_text(dq[i], CVtListCtrlEx::col_filename));
+			if (droppedIndex >= 0)
+				droppedItem = pDropListCtrl->get_text(droppedIndex, CVtListCtrlEx::col_filename);
 
-	TRACE(_T("dropped on = %s\n"), droppedItem);
+			std::deque<int> dq;
+			pDragListCtrl->get_selected_items(&dq);
+
+			for (int i = 0; i < dq.size(); i++)
+				TRACE(_T("dropped src %d = %s\n"), i, pDragListCtrl->get_text(dq[i], CVtListCtrlEx::col_filename));
+
+			TRACE(_T("dropped on = %s\n"), droppedItem);
+
+			//필요한 모든 처리가 끝나면 drophilited 표시를 없애준다.
+			if (droppedIndex >= 0)
+				pDropListCtrl->SetItemState(droppedIndex, 0, LVIS_DROPHILITED);
+		}
+		else if (msg->pTarget->IsKindOf(RUNTIME_CLASS(CTreeCtrl)))
+		{
+			CTreeCtrl* pDropTreeCtrl = (CTreeCtrl*)msg->pTarget;
+			HTREEITEM hItem = pDropTreeCtrl->GetDropHilightItem();
+
+			if (hItem)
+			{
+				droppedItem = pDropTreeCtrl->GetItemText(hItem);
+				TRACE(_T("dropped on = %s\n"), droppedItem);
+				//pDropTreeCtrl->SetItemState(hItem, 0, TVIS_DROPHILITED);	<= 이걸로는 해제 안된다.
+				pDropTreeCtrl->SelectDropTarget(NULL);
+			}
+		}
+	}
 
 	return 0;
 }
@@ -651,4 +683,15 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_treectrlex(WPARAM wParam, LPARAM lPara
 	}
 
 	return 0;
+}
+
+void Ctest_vtlistctrlexDlg::OnCbnSelchangeComboColorTheme()
+{
+	int index = m_combo_color_theme.GetCurSel();
+
+	if (index < 0 || index >= m_combo_color_theme.GetCount())
+		return;
+
+	m_tree0.set_color_theme(index);
+	m_list_shell0.set_color_theme(index);
 }

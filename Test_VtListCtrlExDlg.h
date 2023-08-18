@@ -87,4 +87,6 @@ public:
 	//afx_msg void OnLvnBegindragListShell0(NMHDR* pNMHDR, LRESULT* pResult);
 	//afx_msg void OnLvnBegindragListShell1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkListShell1(NMHDR* pNMHDR, LRESULT* pResult);
+	CComboBox m_combo_color_theme;
+	afx_msg void OnCbnSelchangeComboColorTheme();
 };
