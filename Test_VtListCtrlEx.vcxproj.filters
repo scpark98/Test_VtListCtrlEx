@@ -81,6 +81,9 @@
     <ClInclude Include="..\..\Common\system\ShellImageList\ShellImageList.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Common\log\UtilLog.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Test_VtListCtrlEx.cpp">
@@ -132,6 +135,9 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\system\ShellImageList\ShellImageList.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\log\UtilLog.cpp">
       <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>

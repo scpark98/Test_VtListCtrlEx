@@ -10,6 +10,10 @@
 #include "../../Common/MemoryDC.h"
 #include "../../Common/RandomText.h"
 
+#include <security.h>
+#include <secext.h>
+
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -83,9 +87,9 @@ BEGIN_MESSAGE_MAP(Ctest_vtlistctrlexDlg, CDialogEx)
 	ON_NOTIFY(LVN_KEYDOWN, IDC_LIST_SHELL0, &Ctest_vtlistctrlexDlg::OnLvnKeydownListShell0)
 	ON_NOTIFY(NM_RCLICK, IDC_LIST_SHELL0, &Ctest_vtlistctrlexDlg::OnNMRClickListShell0)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SHELL0, &Ctest_vtlistctrlexDlg::OnNMDblclkListShell0)
-	ON_MESSAGE(MESSAGE_PATHCTRL, &Ctest_vtlistctrlexDlg::on_message_pathctrl)
-	ON_MESSAGE(MESSAGE_VTLISTCTRLEX, &Ctest_vtlistctrlexDlg::on_message_vtlistctrlex)
-	ON_MESSAGE(MESSAGE_TREECTRLEX, &Ctest_vtlistctrlexDlg::on_message_treectrlex)
+	ON_REGISTERED_MESSAGE(Message_CPathCtrl, &Ctest_vtlistctrlexDlg::on_message_pathctrl)
+	ON_REGISTERED_MESSAGE(Message_CVtListCtrlEx, &Ctest_vtlistctrlexDlg::on_message_vtlistctrlex)
+	ON_REGISTERED_MESSAGE(Message_CTreeCtrlEx, &Ctest_vtlistctrlexDlg::on_message_treectrlex)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SHELL1, &Ctest_vtlistctrlexDlg::OnNMDblclkListShell1)
 	ON_CBN_SELCHANGE(IDC_COMBO_COLOR_THEME, &Ctest_vtlistctrlexDlg::OnCbnSelchangeComboColorTheme)
 END_MESSAGE_MAP()
@@ -147,22 +151,36 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
 
+	logWrite(LOG_LEVEL_RELEASE, _T("1"));
+
 	//shellimagelist 초기설정
 	m_ShellImageList.Initialize();
 
-	//특수한 쉘폴더는 OS언어마다 모두 다르므로 현재 언어에 맞게 넣어주고 시작해야 한다.
-	//만약 Resource를 이용하여 다국어를 지원하려면 _T("내 PC")와 같이 주는 것이 아니라
-	//Resource의 StringTable에 정의되어 있는 LoadString(NFTD_IDS_COMPUTER)과 같이 줘야 한다.
-	m_ShellImageList.set_shell_known_string(CSIDL_DRIVES, _T("내 PC"));
-	m_ShellImageList.set_shell_known_string(CSIDL_PERSONAL, _T("문서"));
-	m_ShellImageList.set_shell_known_string(CSIDL_DESKTOP, _T("바탕 화면"));
+	logWrite(LOG_LEVEL_RELEASE, _T("2"));
+
+
+	logWrite(LOG_LEVEL_RELEASE, _T("3"));
 
 	m_tree0.set_shell_imagelist(&m_ShellImageList);
 	m_tree1.set_shell_imagelist(&m_ShellImageList);
+	logWrite(LOG_LEVEL_RELEASE, _T("4"));
+
 	m_tree0.set_as_shell_treectrl();
 	m_tree1.set_as_shell_treectrl();
+	m_tree0.use_drag_and_drop(true);
+	m_tree1.use_drag_and_drop(true);
+
+	logWrite(LOG_LEVEL_RELEASE, _T("5"));
+
+	m_tree0.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
+	m_tree1.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
+
+	logWrite(LOG_LEVEL_RELEASE, _T("6"));
+
 	m_tree0.select_item(_T("C:\\"));
-	m_tree1.select_item(_T("d:\\"));
+	m_tree1.select_item(_T("c:\\"));
+
+	logWrite(LOG_LEVEL_RELEASE, _T("7"));
 
 	m_list_shell0.set_as_shell_listctrl();
 	m_list_shell0.set_shell_imagelist(&m_ShellImageList);
@@ -176,14 +194,14 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_list_shell1.set_shell_imagelist(&m_ShellImageList);
 	m_list_shell1.use_drag_and_drop(true);
 	m_list_shell1.load_column_width(&theApp, _T("shell list1"));
-	m_list_shell1.set_path(_T("d:\\"));
+	m_list_shell1.set_path(_T("c:\\"));
 	m_list_shell1.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
 
 	m_path0.set_shell_imagelist(&m_ShellImageList);
 	m_path0.set_path(_T("C:\\"));
 
 	m_path1.set_shell_imagelist(&m_ShellImageList);
-	m_path1.set_path(_T("D:\\"));
+	m_path1.set_path(_T("c:\\"));
 
 	//for test
 	//m_path.add_remote_drive_volume(_T("로컬 디스크 (C:)"));
@@ -215,9 +233,11 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	plist->set_headings(_T("No,50;Name,150;Slogan,200;Score,100;Memo,200"));
 	//m_list.set_color_theme(CVtListCtrlEx::color_theme_dark_gray);
 	//m_list.set_line_height(theApp.GetProfileInt(_T("list name"), _T("line height"), 80));
+
+	plist->set_font_size(theApp.GetProfileInt(_T("list"), _T("font size"), 9));
+	plist->set_font_name(theApp.GetProfileString(_T("list"), _T("font name"), _T("맑은 고딕")));
+
 	plist->load_column_width(&theApp, _T("list name"));
-	plist->set_font_size(theApp.GetProfileInt(_T("file list"), _T("font size"), 9));
-	plist->set_font_name(theApp.GetProfileString(_T("file list"), _T("font name"), _T("맑은 고딕")));
 	plist->set_header_height(24);
 
 	//
@@ -239,8 +259,6 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	plist->allow_edit();
 
 	srand(time(NULL));
-
-	int index;
 
 	for (int i = 0; i < 100; i++)
 	{
@@ -592,7 +610,7 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_pathctrl(WPARAM wParam, LPARAM lParam)
 
 	if (pMsg->pThis == &m_path0)
 	{
-		trace(_T("on_message_pathctrl from m_path0\n"));
+		Trace(_T("on_message_pathctrl from m_path0\n"));
 		if (pMsg->message == CPathCtrl::message_pathctrl_path_changed)
 		{
 			m_list_shell0.set_path(pMsg->cur_path);// m_path0.get_full_path());
@@ -601,7 +619,7 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_pathctrl(WPARAM wParam, LPARAM lParam)
 	}
 	else if (pMsg->pThis == &m_path1)
 	{
-		trace(_T("on_message_pathctrl from m_path1\n"));
+		Trace(_T("on_message_pathctrl from m_path1\n"));
 		if (pMsg->message == CPathCtrl::message_pathctrl_path_changed)
 		{
 			m_list_shell1.set_path(pMsg->cur_path);// m_path1.get_full_path());
@@ -616,7 +634,7 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_vtlistctrlex(WPARAM wParam, LPARAM lPa
 {
 	CVtListCtrlExMessage* msg = (CVtListCtrlExMessage*)wParam;
 
-	if (msg->message == CVtListCtrlEx::message_drag_and_dropped)
+	if (msg->message == CVtListCtrlEx::message_drag_and_drop)
 	{
 		CString droppedItem;
 		CVtListCtrlEx* pDragListCtrl = (CVtListCtrlEx*)msg->pThis;
@@ -634,9 +652,11 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_vtlistctrlex(WPARAM wParam, LPARAM lPa
 			pDragListCtrl->get_selected_items(&dq);
 
 			for (int i = 0; i < dq.size(); i++)
-				TRACE(_T("dropped src %d = %s\n"), i, pDragListCtrl->get_text(dq[i], CVtListCtrlEx::col_filename));
+				Trace(_T("dropped src %d = %s\n"), i, pDragListCtrl->get_text(dq[i], CVtListCtrlEx::col_filename));
 
-			TRACE(_T("dropped on = %s\n"), droppedItem);
+			Trace(_T("dropped on = %s\n"), droppedItem);
+
+
 
 			//필요한 모든 처리가 끝나면 drophilited 표시를 없애준다.
 			if (droppedIndex >= 0)
@@ -650,7 +670,11 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_vtlistctrlex(WPARAM wParam, LPARAM lPa
 			if (hItem)
 			{
 				droppedItem = pDropTreeCtrl->GetItemText(hItem);
-				TRACE(_T("dropped on = %s\n"), droppedItem);
+				Trace(_T("dropped on = %s\n"), droppedItem);
+
+
+
+				//필요한 모든 처리가 끝나면 drophilited 표시를 없애준다.
 				//pDropTreeCtrl->SetItemState(hItem, 0, TVIS_DROPHILITED);	<= 이걸로는 해제 안된다.
 				pDropTreeCtrl->SelectDropTarget(NULL);
 			}
@@ -663,23 +687,61 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_vtlistctrlex(WPARAM wParam, LPARAM lPa
 LRESULT	Ctest_vtlistctrlexDlg::on_message_treectrlex(WPARAM wParam, LPARAM lParam)
 {
 	CTreeCtrlExMessage* msg = (CTreeCtrlExMessage*)wParam;
-	CString path = *(CString*)lParam;
 
-	if (msg->pThis == &m_tree0)
+	//drag_and_drop일 경우는 msg에 src, dst에 대한 모든 정보가 포함되어 있으므로
+	//m_tree0 or m_tree1 어느 컨트롤이냐에 따라 처리할 필요는 없다.
+	if (msg->message == CTreeCtrlEx::message_drag_and_drop)
 	{
-		if (msg->message == CTreeCtrlEx::message_selchanged)
+		CString droppedItem;
+		CTreeCtrlEx* pDragTreeCtrl = (CTreeCtrlEx*)msg->pThis;
+
+		if (msg->pTarget->IsKindOf(RUNTIME_CLASS(CListCtrl)))
+		{
+			CListCtrl* pDropListCtrl = (CListCtrl*)msg->pTarget;
+
+			if (pDragTreeCtrl->m_nDropIndex >= 0)
+				droppedItem = pDropListCtrl->GetItemText(pDragTreeCtrl->m_nDropIndex, 0);
+
+			TRACE(_T("drag item = %s\n"), pDragTreeCtrl->GetItemText(pDragTreeCtrl->m_DragItem));
+			TRACE(_T("dropped on = %s\n"), (droppedItem.IsEmpty() ? _T("dropped on ListCtrl") : droppedItem));
+
+			//필요한 모든 처리가 끝나면 drophilited 표시를 없애준다.
+			if (pDragTreeCtrl->m_nDropIndex >= 0)
+				pDropListCtrl->SetItemState(pDragTreeCtrl->m_nDropIndex, 0, LVIS_DROPHILITED);
+		}
+		else if (msg->pTarget->IsKindOf(RUNTIME_CLASS(CTreeCtrl)))
+		{
+			CTreeCtrlEx* pDropTreeCtrl = (CTreeCtrlEx*)msg->pTarget;
+
+			TRACE(_T("drag item = %s\n"), pDragTreeCtrl->GetItemText(pDragTreeCtrl->m_DragItem));
+			TRACE(_T("dropped on = %s\n"), pDropTreeCtrl->GetItemText(pDragTreeCtrl->m_DropItem));
+
+			//필요한 모든 처리가 끝나면 drophilited 표시를 없애준다.
+			//pDropTreeCtrl->SetItemState(hItem, 0, TVIS_DROPHILITED);	<= 이걸로는 해제 안된다.
+			pDropTreeCtrl->SelectDropTarget(NULL);
+		}
+
+
+		return 0;
+	}
+	else if (msg->message == CTreeCtrlEx::message_selchanged)
+	{
+		CString path = *(CString*)lParam;
+
+		//AfxMessageBox(path);
+		
+		if (msg->pThis == &m_tree0)
 		{
 			m_list_shell0.set_path(path);
 			m_path0.set_path(path);
 		}
-	}
-	else if (msg->pThis == &m_tree1)
-	{
-		if (msg->message == CTreeCtrlEx::message_selchanged)
+		else if (msg->pThis == &m_tree1)
 		{
 			m_list_shell1.set_path(path);
 			m_path1.set_path(path);
 		}
+
+		//AfxMessageBox(_T("set_path end"));
 	}
 
 	return 0;

@@ -23,7 +23,7 @@ END_MESSAGE_MAP()
 Ctest_vtlistctrlexApp::Ctest_vtlistctrlexApp()
 {
 	// support Restart Manager
-	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_RESTART;
+	//m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_RESTART;
 
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
@@ -33,7 +33,7 @@ Ctest_vtlistctrlexApp::Ctest_vtlistctrlexApp()
 // The one and only Ctest_vtlistctrlexApp object
 
 Ctest_vtlistctrlexApp theApp;
-
+UtilLog gLog;
 
 // Ctest_vtlistctrlexApp initialization
 

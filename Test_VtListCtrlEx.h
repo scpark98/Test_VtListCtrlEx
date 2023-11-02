@@ -10,6 +10,8 @@
 
 #include "resource.h"		// main symbols
 
+#include "../../Common/log/UtilLog.h"
+
 
 // Ctest_vtlistctrlexApp:
 // See test_vtlistctrlex.cpp for the implementation of this class
@@ -30,3 +32,4 @@ public:
 };
 
 extern Ctest_vtlistctrlexApp theApp;
+extern UtilLog gLog;
