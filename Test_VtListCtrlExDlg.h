@@ -48,6 +48,11 @@ public:
 protected:
 	CToolTipCtrl	m_tooltip;
 
+	enum TIMER_ID
+	{
+		timer_add_data = 0,
+	};
+
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_TEST_VTLISTCTRLEX_DIALOG };
@@ -89,4 +94,7 @@ public:
 	afx_msg void OnNMDblclkListShell1(NMHDR* pNMHDR, LRESULT* pResult);
 	CComboBox m_combo_color_theme;
 	afx_msg void OnCbnSelchangeComboColorTheme();
+	afx_msg BOOL OnQueryEndSession();
+	afx_msg void OnEndSession(BOOL bEnding);
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };

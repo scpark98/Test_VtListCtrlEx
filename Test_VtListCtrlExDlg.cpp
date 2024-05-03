@@ -92,6 +92,9 @@ BEGIN_MESSAGE_MAP(Ctest_vtlistctrlexDlg, CDialogEx)
 	ON_REGISTERED_MESSAGE(Message_CTreeCtrlEx, &Ctest_vtlistctrlexDlg::on_message_treectrlex)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SHELL1, &Ctest_vtlistctrlexDlg::OnNMDblclkListShell1)
 	ON_CBN_SELCHANGE(IDC_COMBO_COLOR_THEME, &Ctest_vtlistctrlexDlg::OnCbnSelchangeComboColorTheme)
+	ON_WM_QUERYENDSESSION()
+	ON_WM_ENDSESSION()
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -127,6 +130,16 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	CString str = _T("abcd1234 한글");
+	char chStr[50] = { 0, };
+	char *pStr;
+	sprintf(chStr, "%s", (LPSTR)(LPCTSTR)str);	//MBCS : ok, UNICODE : fail
+	sprintf(chStr, "%s", CStringA(str));		//both : ok
+	//strcpy(chStr, str);
+	//memcpy(chStr, CString2char(str), );
+	//chStr = CString2char(str);
+
+
 	m_resize.Create(this);
 
 	m_resize.Add(IDC_LIST, 0, 0, 0, 100);
@@ -144,6 +157,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_combo_color_theme.AddString(_T("color_theme_navy_blue"));
 	m_combo_color_theme.AddString(_T("color_theme_dark_blue"));
 	m_combo_color_theme.AddString(_T("color_theme_dark_gray"));
+	m_combo_color_theme.AddString(_T("color_theme_dark"));
 
 	m_combo_color_theme.SetCurSel(0);
 
@@ -151,36 +165,36 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, 0);
 
-	logWrite(LOG_LEVEL_RELEASE, _T("1"));
+	logWrite(_T("1"));
 
 	//shellimagelist 초기설정
 	m_ShellImageList.Initialize();
 
-	logWrite(LOG_LEVEL_RELEASE, _T("2"));
+	logWrite(_T("2"));
 
 
-	logWrite(LOG_LEVEL_RELEASE, _T("3"));
+	logWrite(_T("3"));
 
 	m_tree0.set_shell_imagelist(&m_ShellImageList);
 	m_tree1.set_shell_imagelist(&m_ShellImageList);
-	logWrite(LOG_LEVEL_RELEASE, _T("4"));
+	logWrite(_T("4"));
 
 	m_tree0.set_as_shell_treectrl();
 	m_tree1.set_as_shell_treectrl();
 	m_tree0.use_drag_and_drop(true);
 	m_tree1.use_drag_and_drop(true);
 
-	logWrite(LOG_LEVEL_RELEASE, _T("5"));
+	logWrite(_T("5"));
 
 	m_tree0.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
 	m_tree1.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
 
-	logWrite(LOG_LEVEL_RELEASE, _T("6"));
+	logWrite(_T("6"));
 
 	m_tree0.select_item(_T("C:\\"));
 	m_tree1.select_item(_T("c:\\"));
 
-	logWrite(LOG_LEVEL_RELEASE, _T("7"));
+	logWrite(_T("7"));
 
 	m_list_shell0.set_as_shell_listctrl();
 	m_list_shell0.set_shell_imagelist(&m_ShellImageList);
@@ -274,6 +288,8 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 
 	plist->set_item_color(10, 1, red, blue);
 	plist->set_item_color(3, 0, deeppink, dodgerblue);
+
+	SetTimer(timer_add_data, 100, NULL);
 }
 
 void Ctest_vtlistctrlexDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -419,7 +435,7 @@ void Ctest_vtlistctrlexDlg::OnLvnEndlabeleditListShell0(NMHDR* pNMHDR, LRESULT* 
 		{
 			if (!MoveFile(oldfile, newfile))
 			{
-				get_last_error_message(true);
+				get_last_error_string(true);
 				m_list_shell0.set_text(item, subItem, oldtext);
 				return;
 			}
@@ -456,6 +472,33 @@ BOOL Ctest_vtlistctrlexDlg::PreTranslateMessage(MSG* pMsg)
 
 		// relay mouse event before deleting old tool 
 		m_tooltip.SendMessage(TTM_RELAYEVENT, 0, (LPARAM)&msg);
+	}
+
+	switch (pMsg->message)
+	{
+		case WM_POWERBROADCAST :
+			if (pMsg->wParam == PBT_APMSUSPEND)
+			{
+				AfxMessageBox(_T("WM_POWERBROADCAST -> PBT_APMSUSPEND"));
+				return FALSE;
+			}
+			break;
+		case WM_QUERYENDSESSION:
+				AfxMessageBox(_T("Computer is shutting down"));
+			if (pMsg->lParam == 0)
+			{
+				return FALSE;
+			}
+			else if ((pMsg->lParam & ENDSESSION_LOGOFF) == ENDSESSION_LOGOFF)
+			{
+				AfxMessageBox(_T("User is logging off"));
+				return FALSE;
+			}
+			break;
+		case WM_ENDSESSION :
+			{
+				AfxMessageBox(_T("WM_ENDSESSION"));
+			}
 	}
 
 	/*
@@ -754,6 +797,55 @@ void Ctest_vtlistctrlexDlg::OnCbnSelchangeComboColorTheme()
 	if (index < 0 || index >= m_combo_color_theme.GetCount())
 		return;
 
+	m_list.set_color_theme(index);
+
 	m_tree0.set_color_theme(index);
 	m_list_shell0.set_color_theme(index);
+
+	m_tree1.set_color_theme(index);
+	m_list_shell1.set_color_theme(index);
+}
+
+
+BOOL Ctest_vtlistctrlexDlg::OnQueryEndSession()
+{
+	if (!CDialogEx::OnQueryEndSession())
+		return FALSE;
+
+	// TODO:  여기에 특수화된 쿼리 종료 세션 코드를 추가합니다.
+	ShutdownBlockReasonCreate(m_hWnd, CStringW("프로그램을 안전종료중입니다..."));
+
+	AfxMessageBox(_T("OnQueryEndSession"));
+
+	ShutdownBlockReasonDestroy(m_hWnd);
+
+	return TRUE;
+}
+
+
+void Ctest_vtlistctrlexDlg::OnEndSession(BOOL bEnding)
+{
+	CDialogEx::OnEndSession(bEnding);
+
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+	AfxMessageBox(_T("OnEndSession"));
+}
+
+
+void Ctest_vtlistctrlexDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	if (nIDEvent == timer_add_data)
+	{
+		int index = m_list.add_item(i2S(m_list.size()));
+		m_list.set_text(index, list_name, RandomText::GetName());
+		//m_list.set_text_color(index, 0, RGB(index, index, index));//random19937(RGB(0,0,0), RGB(255,255,255)));
+		m_list.set_text(index, list_slogan, RandomText::GetSlogan());
+		//m_list.set_text_color(index, index, RGB(indexi, 0, 0));//random19937(RGB(0,0,0), RGB(255,255,255)));
+		m_list.set_text(index, list_score, i2S(random19937(0, 100)));
+		//m_list.set_text_color(index, 2, RGB(0, 0, 255-index));//random19937(RGB(0,0,0), RGB(255,255,255)));
+		m_list.set_text(index, list_memo, RandomText::GetName());
+	}
+
+	CDialogEx::OnTimer(nIDEvent);
 }

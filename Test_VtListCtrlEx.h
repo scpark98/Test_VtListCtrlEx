@@ -10,7 +10,7 @@
 
 #include "resource.h"		// main symbols
 
-#include "../../Common/log/UtilLog.h"
+#include "../../Common/log/SCLog/SCLog.h"
 
 
 // Ctest_vtlistctrlexApp:
@@ -32,4 +32,4 @@ public:
 };
 
 extern Ctest_vtlistctrlexApp theApp;
-extern UtilLog gLog;
+extern SCLog gLog;
