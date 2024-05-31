@@ -12,7 +12,7 @@
 #include "../../Common/Functions.h"
 #include "../../Common/MemoryDC.h"
 #include "../../Common/ResizeCtrl.h"
-#include "../../Common/CTreeCtrl/TreeCtrlEx.h"
+#include "../../Common/CTreeCtrl/SCTreeCtrl/SCTreeCtrl.h"
 #include "../../Common/CListCtrl/CVtListCtrlEx/VtListCtrlEx.h"
 #include "../../Common/CStatic/PathCtrl/PathCtrl.h"
 #include "../../Common/system/ShellImageList/ShellImageList.h"
@@ -40,7 +40,7 @@ public:
 
 	LRESULT			on_message_vtlistctrlex(WPARAM wParam, LPARAM lParam);
 	LRESULT			on_message_pathctrl(WPARAM wParam, LPARAM lParam);
-	LRESULT			on_message_treectrlex(WPARAM wParam, LPARAM lParam);
+	LRESULT			on_message_CSCTreeCtrl(WPARAM wParam, LPARAM lParam);
 
 	//Shell의 imagelist 및 shell과 관계된 멤버 제공
 	CShellImageList		m_ShellImageList;
@@ -78,8 +78,8 @@ public:
 	CPathCtrl m_path0;
 	CPathCtrl m_path1;
 	CVtListCtrlEx m_list;
-	CTreeCtrlEx m_tree0;
-	CTreeCtrlEx m_tree1;
+	CSCTreeCtrl m_tree0;
+	CSCTreeCtrl m_tree1;
 	CVtListCtrlEx m_list_shell0;
 	CVtListCtrlEx m_list_shell1;
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);

@@ -89,7 +89,7 @@ BEGIN_MESSAGE_MAP(Ctest_vtlistctrlexDlg, CDialogEx)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SHELL0, &Ctest_vtlistctrlexDlg::OnNMDblclkListShell0)
 	ON_REGISTERED_MESSAGE(Message_CPathCtrl, &Ctest_vtlistctrlexDlg::on_message_pathctrl)
 	ON_REGISTERED_MESSAGE(Message_CVtListCtrlEx, &Ctest_vtlistctrlexDlg::on_message_vtlistctrlex)
-	ON_REGISTERED_MESSAGE(Message_CTreeCtrlEx, &Ctest_vtlistctrlexDlg::on_message_treectrlex)
+	ON_REGISTERED_MESSAGE(Message_CSCTreeCtrl, &Ctest_vtlistctrlexDlg::on_message_CSCTreeCtrl)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SHELL1, &Ctest_vtlistctrlexDlg::OnNMDblclkListShell1)
 	ON_CBN_SELCHANGE(IDC_COMBO_COLOR_THEME, &Ctest_vtlistctrlexDlg::OnCbnSelchangeComboColorTheme)
 	ON_WM_QUERYENDSESSION()
@@ -167,7 +167,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	logWrite(_T("1"));
 
-	//shellimagelist 초기설정
+	//shellimagelist를 초기화 한 후 트리, 리스트에서 공통으로 사용한다.
 	m_ShellImageList.Initialize();
 
 	logWrite(_T("2"));
@@ -175,12 +175,12 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	logWrite(_T("3"));
 
-	m_tree0.set_shell_imagelist(&m_ShellImageList);
-	m_tree1.set_shell_imagelist(&m_ShellImageList);
+	//m_tree0.set_shell_imagelist(&m_ShellImageList);
+	//m_tree1.set_shell_imagelist(&m_ShellImageList);
 	logWrite(_T("4"));
 
-	m_tree0.set_as_shell_treectrl();
-	m_tree1.set_as_shell_treectrl();
+	m_tree0.set_as_shell_treectrl(&m_ShellImageList, true);
+	m_tree1.set_as_shell_treectrl(&m_ShellImageList, true);
 	m_tree0.use_drag_and_drop(true);
 	m_tree1.use_drag_and_drop(true);
 
@@ -191,8 +191,8 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	logWrite(_T("6"));
 
-	m_tree0.select_item(_T("C:\\"));
-	m_tree1.select_item(_T("c:\\"));
+	m_tree0.select_folder(_T("C:\\"));
+	m_tree1.select_folder(_T("c:\\"));
 
 	logWrite(_T("7"));
 
@@ -589,7 +589,7 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell0(NMHDR* pNMHDR, LRESULT* pResult
 																m_ShellImageList.get_csidl_map());
 				m_list_shell0.set_path(new_path);
 				m_path0.set_path(new_path);
-				m_tree0.select_item(new_path);
+				m_tree0.select_folder(new_path);
 			}
 			else
 			{
@@ -598,7 +598,7 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell0(NMHDR* pNMHDR, LRESULT* pResult
 				{
 					m_list_shell0.set_path(new_path);
 					m_path0.set_path(new_path);
-					m_tree0.select_item(new_path);
+					m_tree0.select_folder(new_path);
 				}
 			}
 		}
@@ -629,7 +629,7 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell1(NMHDR* pNMHDR, LRESULT* pResult
 																m_ShellImageList.get_csidl_map());
 				m_list_shell1.set_path(new_path);
 				m_path1.set_path(new_path);
-				m_tree1.select_item(new_path);
+				m_tree1.select_folder(new_path);
 			}
 			else
 			{
@@ -638,7 +638,7 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell1(NMHDR* pNMHDR, LRESULT* pResult
 				{
 					m_list_shell1.set_path(new_path);
 					m_path1.set_path(new_path);
-					m_tree1.select_item(new_path);
+					m_tree1.select_folder(new_path);
 				}
 			}
 		}
@@ -653,20 +653,20 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_pathctrl(WPARAM wParam, LPARAM lParam)
 
 	if (pMsg->pThis == &m_path0)
 	{
-		Trace(_T("on_message_pathctrl from m_path0\n"));
+		TRACE(_T("on_message_pathctrl from m_path0\n"));
 		if (pMsg->message == CPathCtrl::message_pathctrl_path_changed)
 		{
 			m_list_shell0.set_path(pMsg->cur_path);// m_path0.get_full_path());
-			m_tree0.select_item(pMsg->cur_path);
+			m_tree0.select_folder(pMsg->cur_path);
 		}
 	}
 	else if (pMsg->pThis == &m_path1)
 	{
-		Trace(_T("on_message_pathctrl from m_path1\n"));
+		TRACE(_T("on_message_pathctrl from m_path1\n"));
 		if (pMsg->message == CPathCtrl::message_pathctrl_path_changed)
 		{
 			m_list_shell1.set_path(pMsg->cur_path);// m_path1.get_full_path());
-			m_tree1.select_item(pMsg->cur_path);
+			m_tree1.select_folder(pMsg->cur_path);
 		}
 	}
 
@@ -695,9 +695,9 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_vtlistctrlex(WPARAM wParam, LPARAM lPa
 			pDragListCtrl->get_selected_items(&dq);
 
 			for (int i = 0; i < dq.size(); i++)
-				Trace(_T("dropped src %d = %s\n"), i, pDragListCtrl->get_text(dq[i], CVtListCtrlEx::col_filename));
+				TRACE(_T("dropped src %d = %s\n"), i, pDragListCtrl->get_text(dq[i], CVtListCtrlEx::col_filename));
 
-			Trace(_T("dropped on = %s\n"), droppedItem);
+			TRACE(_T("dropped on = %s\n"), droppedItem);
 
 
 
@@ -713,7 +713,7 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_vtlistctrlex(WPARAM wParam, LPARAM lPa
 			if (hItem)
 			{
 				droppedItem = pDropTreeCtrl->GetItemText(hItem);
-				Trace(_T("dropped on = %s\n"), droppedItem);
+				TRACE(_T("dropped on = %s\n"), droppedItem);
 
 
 
@@ -727,16 +727,16 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_vtlistctrlex(WPARAM wParam, LPARAM lPa
 	return 0;
 }
 
-LRESULT	Ctest_vtlistctrlexDlg::on_message_treectrlex(WPARAM wParam, LPARAM lParam)
+LRESULT	Ctest_vtlistctrlexDlg::on_message_CSCTreeCtrl(WPARAM wParam, LPARAM lParam)
 {
-	CTreeCtrlExMessage* msg = (CTreeCtrlExMessage*)wParam;
+	CSCTreeCtrlMessage* msg = (CSCTreeCtrlMessage*)wParam;
 
 	//drag_and_drop일 경우는 msg에 src, dst에 대한 모든 정보가 포함되어 있으므로
 	//m_tree0 or m_tree1 어느 컨트롤이냐에 따라 처리할 필요는 없다.
-	if (msg->message == CTreeCtrlEx::message_drag_and_drop)
+	if (msg->message == CSCTreeCtrl::message_drag_and_drop)
 	{
 		CString droppedItem;
-		CTreeCtrlEx* pDragTreeCtrl = (CTreeCtrlEx*)msg->pThis;
+		CSCTreeCtrl* pDragTreeCtrl = (CSCTreeCtrl*)msg->pThis;
 
 		if (msg->pTarget->IsKindOf(RUNTIME_CLASS(CListCtrl)))
 		{
@@ -754,7 +754,7 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_treectrlex(WPARAM wParam, LPARAM lPara
 		}
 		else if (msg->pTarget->IsKindOf(RUNTIME_CLASS(CTreeCtrl)))
 		{
-			CTreeCtrlEx* pDropTreeCtrl = (CTreeCtrlEx*)msg->pTarget;
+			CSCTreeCtrl* pDropTreeCtrl = (CSCTreeCtrl*)msg->pTarget;
 
 			TRACE(_T("drag item = %s\n"), pDragTreeCtrl->GetItemText(pDragTreeCtrl->m_DragItem));
 			TRACE(_T("dropped on = %s\n"), pDropTreeCtrl->GetItemText(pDragTreeCtrl->m_DropItem));
@@ -764,10 +764,9 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_treectrlex(WPARAM wParam, LPARAM lPara
 			pDropTreeCtrl->SelectDropTarget(NULL);
 		}
 
-
 		return 0;
 	}
-	else if (msg->message == CTreeCtrlEx::message_selchanged)
+	else if (msg->message == CSCTreeCtrl::message_selchanged)
 	{
 		CString path = *(CString*)lParam;
 
