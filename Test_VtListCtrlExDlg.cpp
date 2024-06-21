@@ -175,10 +175,9 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	logWrite(_T("3"));
 
-	//m_tree0.set_shell_imagelist(&m_ShellImageList);
-	//m_tree1.set_shell_imagelist(&m_ShellImageList);
 	logWrite(_T("4"));
 
+	m_tree0.use_default_paint = false;
 	m_tree0.set_as_shell_treectrl(&m_ShellImageList, true);
 	m_tree1.set_as_shell_treectrl(&m_ShellImageList, true);
 	m_tree0.use_drag_and_drop(true);
@@ -289,7 +288,7 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	plist->set_item_color(10, 1, red, blue);
 	plist->set_item_color(3, 0, deeppink, dodgerblue);
 
-	SetTimer(timer_add_data, 100, NULL);
+	//SetTimer(timer_add_data, 100, NULL);
 }
 
 void Ctest_vtlistctrlexDlg::OnSysCommand(UINT nID, LPARAM lParam)
