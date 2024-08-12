@@ -232,6 +232,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_list_shell0.set_path(_T("C:\\"));
 	m_list_shell0.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
 
+	logWrite(_T("8"));
 
 	m_list_shell1.set_as_shell_listctrl();
 	m_list_shell1.set_shell_imagelist(&m_ShellImageList);
@@ -240,12 +241,14 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_list_shell1.set_path(_T("c:\\"));
 	m_list_shell1.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
 
+	logWrite(_T("9"));
 	m_path0.set_shell_imagelist(&m_ShellImageList);
 	m_path0.set_path(_T("C:\\"));
 
 	m_path1.set_shell_imagelist(&m_ShellImageList);
 	m_path1.set_path(_T("c:\\"));
 
+	logWrite(_T("10"));
 	//for test
 	//m_path.add_remote_drive_volume(_T("로컬 디스크 (C:)"));
 
@@ -268,6 +271,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	m_tree0.iterate_tree_with_no_recursion();
 
+	logWrite(_T("11"));
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
