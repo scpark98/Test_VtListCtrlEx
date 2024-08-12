@@ -73,6 +73,7 @@ void Ctest_vtlistctrlexDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TREE0, m_tree0);
 	DDX_Control(pDX, IDC_TREE1, m_tree1);
 	DDX_Control(pDX, IDC_COMBO_COLOR_THEME, m_combo_color_theme);
+	DDX_Control(pDX, IDC_TREE, m_tree);
 }
 
 BEGIN_MESSAGE_MAP(Ctest_vtlistctrlexDlg, CDialogEx)
@@ -95,6 +96,12 @@ BEGIN_MESSAGE_MAP(Ctest_vtlistctrlexDlg, CDialogEx)
 	ON_WM_QUERYENDSESSION()
 	ON_WM_ENDSESSION()
 	ON_WM_TIMER()
+	ON_NOTIFY(TVN_BEGINLABELEDIT, IDC_TREE0, &Ctest_vtlistctrlexDlg::OnTvnBeginlabelEditTree0)
+	ON_NOTIFY(TVN_ENDLABELEDIT, IDC_TREE0, &Ctest_vtlistctrlexDlg::OnTvnEndlabelEditTree0)
+	ON_NOTIFY(TVN_BEGINLABELEDIT, IDC_TREE1, &Ctest_vtlistctrlexDlg::OnTvnBeginlabelEditTree1)
+	ON_NOTIFY(TVN_ENDLABELEDIT, IDC_TREE1, &Ctest_vtlistctrlexDlg::OnTvnEndlabelEditTree1)
+	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE0, &Ctest_vtlistctrlexDlg::OnTvnSelchangedTree0)
+	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE1, &Ctest_vtlistctrlexDlg::OnTvnSelchangedTree1)
 END_MESSAGE_MAP()
 
 
@@ -130,16 +137,6 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	CString str = _T("abcd1234 한글");
-	char chStr[50] = { 0, };
-	char *pStr;
-	sprintf(chStr, "%s", (LPSTR)(LPCTSTR)str);	//MBCS : ok, UNICODE : fail
-	sprintf(chStr, "%s", CStringA(str));		//both : ok
-	//strcpy(chStr, str);
-	//memcpy(chStr, CString2char(str), );
-	//chStr = CString2char(str);
-
-
 	m_resize.Create(this);
 
 	m_resize.Add(IDC_LIST, 0, 0, 0, 100);
@@ -177,7 +174,40 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	logWrite(_T("4"));
 
-	m_tree0.use_default_paint = false;
+	bool use_custom_draw = theApp.GetProfileInt(_T("setting"), _T("use custom draw"), true);
+	m_tree.use_custom_draw(use_custom_draw);
+	m_tree.load_from_string(_T("\
+1\n\
+	11\n\
+	12\n\
+		121\n\
+			1211\n\
+				12111\n\
+	13\n\
+2\n\
+	21\n\
+		211\n\
+		212한글\n\
+		213English\n\
+		214にほんご\n\
+		214漢字\n\
+	22\n\
+	23\n\
+		231\n\
+			2311\n\
+			2312\n\
+				23121\n\
+				23122\n\
+3\n\
+	31\n\
+	32\n\
+	33\n\
+		331\n\
+4\n\
+	41\
+	"));
+
+	m_tree0.use_custom_draw(use_custom_draw);
 	m_tree0.set_as_shell_treectrl(&m_ShellImageList, true);
 	m_tree1.set_as_shell_treectrl(&m_ShellImageList, true);
 	m_tree0.use_drag_and_drop(true);
@@ -678,6 +708,17 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_vtlistctrlex(WPARAM wParam, LPARAM lPa
 
 	if (msg->message == CVtListCtrlEx::message_drag_and_drop)
 	{
+		//다른 앱에서 드롭된 경우는 대상 컨트롤들에 남아있는 drophilited 항목들의 상태를 지워줘야 한다.
+		//원래는 마지막 drophilited했던 컨트롤을 기억시켰다가 해당 컨트롤만 해줘야 한다.
+		if (msg->pTarget == NULL)
+		{
+			m_list_shell0.set_items_state(0, LVIS_DROPHILITED);
+			m_list_shell1.set_items_state(0, LVIS_DROPHILITED);
+			m_tree0.SelectDropTarget(NULL);
+			m_tree1.SelectDropTarget(NULL);
+			return 0;
+		}
+
 		CString droppedItem;
 		CVtListCtrlEx* pDragListCtrl = (CVtListCtrlEx*)msg->pThis;
 
@@ -846,4 +887,61 @@ void Ctest_vtlistctrlexDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	CDialogEx::OnTimer(nIDEvent);
+}
+
+
+void Ctest_vtlistctrlexDlg::OnTvnBeginlabelEditTree0(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMTVDISPINFO pTVDispInfo = reinterpret_cast<LPNMTVDISPINFO>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	TRACE(_T("%s\n"), __function__);
+	*pResult = 0;
+}
+
+
+void Ctest_vtlistctrlexDlg::OnTvnEndlabelEditTree0(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMTVDISPINFO pTVDispInfo = reinterpret_cast<LPNMTVDISPINFO>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	TRACE(_T("%s\n"), __function__);
+	*pResult = 0;
+}
+
+
+void Ctest_vtlistctrlexDlg::OnTvnBeginlabelEditTree1(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMTVDISPINFO pTVDispInfo = reinterpret_cast<LPNMTVDISPINFO>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	TRACE(_T("%s\n"), __function__);
+	*pResult = 0;
+}
+
+
+void Ctest_vtlistctrlexDlg::OnTvnEndlabelEditTree1(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMTVDISPINFO pTVDispInfo = reinterpret_cast<LPNMTVDISPINFO>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	TRACE(_T("%s\n"), __function__);
+	*pResult = 0;
+}
+
+
+void Ctest_vtlistctrlexDlg::OnTvnSelchangedTree0(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CString path = m_tree0.get_fullpath(m_tree0.GetSelectedItem());
+
+	m_list_shell0.set_path(path);
+	m_path0.set_path(path);
+
+	*pResult = 0;
+}
+
+
+void Ctest_vtlistctrlexDlg::OnTvnSelchangedTree1(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	*pResult = 0;
 }

@@ -78,6 +78,7 @@ public:
 	CPathCtrl m_path0;
 	CPathCtrl m_path1;
 	CVtListCtrlEx m_list;
+	CSCTreeCtrl m_tree;
 	CSCTreeCtrl m_tree0;
 	CSCTreeCtrl m_tree1;
 	CVtListCtrlEx m_list_shell0;
@@ -97,4 +98,10 @@ public:
 	afx_msg BOOL OnQueryEndSession();
 	afx_msg void OnEndSession(BOOL bEnding);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnTvnBeginlabelEditTree0(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnTvnEndlabelEditTree0(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnTvnBeginlabelEditTree1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnTvnEndlabelEditTree1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnTvnSelchangedTree0(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnTvnSelchangedTree1(NMHDR* pNMHDR, LRESULT* pResult);
 };
