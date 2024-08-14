@@ -223,6 +223,14 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_tree0.select_folder(_T("C:\\"));
 	m_tree1.select_folder(_T("c:\\"));
 
+	//SetWindowTheme()을 적용하면 color_theme_default 외에는 색상이 올바로 표시되지 않는다
+	//m_tree0.set_color_theme(CSCTreeCtrl::color_theme_dark);
+	//m_tree1.set_color_theme(CSCTreeCtrl::color_theme_dark);
+	//SetWindowTheme(m_tree0.m_hWnd, _T("Explorer"), NULL);
+	//SetWindowTheme(m_tree1.m_hWnd, _T("Explorer"), NULL);
+	//m_tree0.set_color_theme(CSCTreeCtrl::color_theme_dark);
+	//m_tree1.set_color_theme(CSCTreeCtrl::color_theme_dark);
+
 	logWrite(_T("7"));
 
 	m_list_shell0.set_as_shell_listctrl();
@@ -779,6 +787,17 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_CSCTreeCtrl(WPARAM wParam, LPARAM lPar
 	//m_tree0 or m_tree1 어느 컨트롤이냐에 따라 처리할 필요는 없다.
 	if (msg->message == CSCTreeCtrl::message_drag_and_drop)
 	{
+		//다른 앱에서 드롭된 경우는 대상 컨트롤들에 남아있는 drophilited 항목들의 상태를 지워줘야 한다.
+		//원래는 마지막 drophilited했던 컨트롤을 기억시켰다가 해당 컨트롤만 해줘야 한다.
+		if (msg->pTarget == NULL)
+		{
+			m_list_shell0.set_items_state(0, LVIS_DROPHILITED);
+			m_list_shell1.set_items_state(0, LVIS_DROPHILITED);
+			m_tree0.SelectDropTarget(NULL);
+			m_tree1.SelectDropTarget(NULL);
+			return 0;
+		}
+
 		CString droppedItem;
 		CSCTreeCtrl* pDragTreeCtrl = (CSCTreeCtrl*)msg->pThis;
 
