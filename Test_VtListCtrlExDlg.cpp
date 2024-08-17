@@ -139,6 +139,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 	m_resize.Create(this);
 
+	m_resize.Add(IDC_TREE, 0, 0, 0, 100);
 	m_resize.Add(IDC_LIST, 0, 0, 0, 100);
 
 	m_resize.Add(IDC_PATH0, 0, 0, 50, 0);
@@ -206,12 +207,13 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 4\n\
 	41\
 	"));
+	m_tree.expand_all();
 
 	m_tree0.use_custom_draw(use_custom_draw);
 	m_tree0.set_as_shell_treectrl(&m_ShellImageList, true);
 	m_tree1.set_as_shell_treectrl(&m_ShellImageList, true);
-	m_tree0.use_drag_and_drop(true);
-	m_tree1.use_drag_and_drop(true);
+	m_tree0.set_use_drag_and_drop(true);
+	m_tree1.set_use_drag_and_drop(true);
 
 	logWrite(_T("5"));
 
@@ -859,6 +861,7 @@ void Ctest_vtlistctrlexDlg::OnCbnSelchangeComboColorTheme()
 	if (index < 0 || index >= m_combo_color_theme.GetCount())
 		return;
 
+	m_tree.set_color_theme(index);
 	m_list.set_color_theme(index);
 
 	m_tree0.set_color_theme(index);
@@ -953,7 +956,7 @@ void Ctest_vtlistctrlexDlg::OnTvnSelchangedTree0(NMHDR* pNMHDR, LRESULT* pResult
 {
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CString path = m_tree0.get_fullpath(m_tree0.GetSelectedItem());
+	CString path = m_tree0.get_fullpath();
 
 	m_list_shell0.set_path(path);
 	m_path0.set_path(path);
@@ -966,5 +969,10 @@ void Ctest_vtlistctrlexDlg::OnTvnSelchangedTree1(NMHDR* pNMHDR, LRESULT* pResult
 {
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CString path = m_tree1.get_fullpath();
+
+	m_list_shell1.set_path(path);
+	m_path1.set_path(path);
+
 	*pResult = 0;
 }
