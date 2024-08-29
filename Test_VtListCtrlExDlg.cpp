@@ -137,6 +137,10 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	SystemParametersInfo(SPI_SETDRAGFULLWINDOWS, true, NULL, SPIF_UPDATEINIFILE + SPIF_SENDCHANGE);
+	SystemParametersInfo(SPI_SETCURSORSHADOW, 0, (PVOID)TRUE, SPIF_UPDATEINIFILE + SPIF_SENDCHANGE);
+
+
 	m_resize.Create(this);
 
 	m_resize.Add(IDC_TREE, 0, 0, 0, 100);
@@ -175,8 +179,8 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	logWrite(_T("4"));
 
+	m_tree.set_use_drag_and_drop(true);
 	bool use_custom_draw = theApp.GetProfileInt(_T("setting"), _T("use custom draw"), true);
-	m_tree.use_custom_draw(use_custom_draw);
 	m_tree.load_from_string(_T("\
 1\n\
 	11\n\
@@ -209,7 +213,6 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	"));
 	m_tree.expand_all();
 
-	m_tree0.use_custom_draw(use_custom_draw);
 	m_tree0.set_as_shell_treectrl(&m_ShellImageList, true);
 	m_tree1.set_as_shell_treectrl(&m_ShellImageList, true);
 	m_tree0.set_use_drag_and_drop(true);
@@ -726,15 +729,21 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_vtlistctrlex(WPARAM wParam, LPARAM lPa
 		//원래는 마지막 drophilited했던 컨트롤을 기억시켰다가 해당 컨트롤만 해줘야 한다.
 		if (msg->pTarget == NULL)
 		{
-			m_list_shell0.set_items_state(0, LVIS_DROPHILITED);
-			m_list_shell1.set_items_state(0, LVIS_DROPHILITED);
+			m_list_shell0.set_items_with_state(0, LVIS_DROPHILITED);
+			m_list_shell1.set_items_with_state(0, LVIS_DROPHILITED);
 			m_tree0.SelectDropTarget(NULL);
 			m_tree1.SelectDropTarget(NULL);
 			return 0;
 		}
 
-		CString droppedItem;
+		CString droppedItemText;
 		CVtListCtrlEx* pDragListCtrl = (CVtListCtrlEx*)msg->pThis;
+
+		std::deque<int> dq;
+		pDragListCtrl->get_selected_items(&dq);
+
+		for (int i = 0; i < dq.size(); i++)
+			TRACE(_T("dragged src %d = %s (%s)\n"), i, pDragListCtrl->get_text(dq[i], CVtListCtrlEx::col_filename), pDragListCtrl->get_path(dq[i]));
 
 		if (msg->pTarget->IsKindOf(RUNTIME_CLASS(CListCtrl)))
 		{
@@ -743,16 +752,12 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_vtlistctrlex(WPARAM wParam, LPARAM lPa
 			int droppedIndex = pDragListCtrl->get_drop_index();
 
 			if (droppedIndex >= 0)
-				droppedItem = pDropListCtrl->get_text(droppedIndex, CVtListCtrlEx::col_filename);
+				droppedItemText = pDropListCtrl->get_text(droppedIndex, CVtListCtrlEx::col_filename);
 
-			std::deque<int> dq;
-			pDragListCtrl->get_selected_items(&dq);
-
-			for (int i = 0; i < dq.size(); i++)
-				TRACE(_T("dropped src %d = %s\n"), i, pDragListCtrl->get_text(dq[i], CVtListCtrlEx::col_filename));
-
-			TRACE(_T("dropped on = %s\n"), droppedItem);
-
+			if (droppedItemText.IsEmpty())
+				TRACE(_T("dropped on = %s\n"), pDropListCtrl->get_path());
+			else
+				TRACE(_T("dropped on = %s\n"), pDropListCtrl->get_path() + _T("\\") + droppedItemText);
 
 
 			//필요한 모든 처리가 끝나면 drophilited 표시를 없애준다.
@@ -761,15 +766,13 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_vtlistctrlex(WPARAM wParam, LPARAM lPa
 		}
 		else if (msg->pTarget->IsKindOf(RUNTIME_CLASS(CTreeCtrl)))
 		{
-			CTreeCtrl* pDropTreeCtrl = (CTreeCtrl*)msg->pTarget;
+			CSCTreeCtrl* pDropTreeCtrl = (CSCTreeCtrl*)msg->pTarget;
 			HTREEITEM hItem = pDropTreeCtrl->GetDropHilightItem();
 
 			if (hItem)
 			{
-				droppedItem = pDropTreeCtrl->GetItemText(hItem);
-				TRACE(_T("dropped on = %s\n"), droppedItem);
-
-
+				droppedItemText = pDropTreeCtrl->GetItemText(hItem);
+				TRACE(_T("dropped on = %s (%s)\n"), droppedItemText, pDropTreeCtrl->get_fullpath(hItem));
 
 				//필요한 모든 처리가 끝나면 drophilited 표시를 없애준다.
 				//pDropTreeCtrl->SetItemState(hItem, 0, TVIS_DROPHILITED);	<= 이걸로는 해제 안된다.
@@ -793,25 +796,29 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_CSCTreeCtrl(WPARAM wParam, LPARAM lPar
 		//원래는 마지막 drophilited했던 컨트롤을 기억시켰다가 해당 컨트롤만 해줘야 한다.
 		if (msg->pTarget == NULL)
 		{
-			m_list_shell0.set_items_state(0, LVIS_DROPHILITED);
-			m_list_shell1.set_items_state(0, LVIS_DROPHILITED);
+			m_list_shell0.set_items_with_state(0, LVIS_DROPHILITED);
+			m_list_shell1.set_items_with_state(0, LVIS_DROPHILITED);
 			m_tree0.SelectDropTarget(NULL);
 			m_tree1.SelectDropTarget(NULL);
 			return 0;
 		}
 
-		CString droppedItem;
+		CString droppedItemText;
 		CSCTreeCtrl* pDragTreeCtrl = (CSCTreeCtrl*)msg->pThis;
 
 		if (msg->pTarget->IsKindOf(RUNTIME_CLASS(CListCtrl)))
 		{
-			CListCtrl* pDropListCtrl = (CListCtrl*)msg->pTarget;
+			CVtListCtrlEx* pDropListCtrl = (CVtListCtrlEx*)msg->pTarget;
 
 			if (pDragTreeCtrl->m_nDropIndex >= 0)
-				droppedItem = pDropListCtrl->GetItemText(pDragTreeCtrl->m_nDropIndex, 0);
+				droppedItemText = pDropListCtrl->GetItemText(pDragTreeCtrl->m_nDropIndex, 0);
 
 			TRACE(_T("drag item = %s\n"), pDragTreeCtrl->GetItemText(pDragTreeCtrl->m_DragItem));
-			TRACE(_T("dropped on = %s\n"), (droppedItem.IsEmpty() ? _T("dropped on ListCtrl") : droppedItem));
+
+			if (droppedItemText.IsEmpty())
+				TRACE(_T("dropped on = %s\n"), pDropListCtrl->get_path());
+			else
+				TRACE(_T("dropped on = %s\n"), pDropListCtrl->get_path() + _T("\\") + droppedItemText);
 
 			//필요한 모든 처리가 끝나면 drophilited 표시를 없애준다.
 			if (pDragTreeCtrl->m_nDropIndex >= 0)

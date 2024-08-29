@@ -19,6 +19,9 @@
     <Filter Include="Common\VtListCtrlEx">
       <UniqueIdentifier>{fdd35dbc-3ef2-4990-88e0-fa7d6cb76376}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\SCMenuBar">
+      <UniqueIdentifier>{3d95b81c-d124-4297-bc69-3bbe20ed8e83}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Test_VtListCtrlEx.h">
@@ -87,6 +90,18 @@
     <ClInclude Include="..\..\Common\GdiplusBitmap.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Common\CMenu\SCMenuBar\SCMenuBar.h">
+      <Filter>Common\SCMenuBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\CMenu\SCMenuBar\SCMenuButton.h">
+      <Filter>Common\SCMenuBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\CMenu\SCMenuBar\SCMenu.h">
+      <Filter>Common\SCMenuBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\CButton\GdiButton\GdiButton.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Test_VtListCtrlEx.cpp">
@@ -141,6 +156,18 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\GdiplusBitmap.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\CMenu\SCMenuBar\SCMenuBar.cpp">
+      <Filter>Common\SCMenuBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\CMenu\SCMenuBar\SCMenuButton.cpp">
+      <Filter>Common\SCMenuBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\CMenu\SCMenuBar\SCMenu.cpp">
+      <Filter>Common\SCMenuBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\CButton\GdiButton\GdiButton.cpp">
       <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
