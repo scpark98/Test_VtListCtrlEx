@@ -154,14 +154,13 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_resize.Add(IDC_TREE1, 50, 0, 10, 100);
 	m_resize.Add(IDC_LIST_SHELL1, 60, 0, 40, 100);
 
-	m_combo_color_theme.AddString(_T("color_theme_default"));
-	m_combo_color_theme.AddString(_T("color_theme_light_blue"));
-	m_combo_color_theme.AddString(_T("color_theme_navy_blue"));
-	m_combo_color_theme.AddString(_T("color_theme_dark_blue"));
-	m_combo_color_theme.AddString(_T("color_theme_dark_gray"));
-	m_combo_color_theme.AddString(_T("color_theme_dark"));
+	std::deque<CString> dq_color_theme = CSCColorTheme::get_color_theme_list();
+	for (auto theme_name : dq_color_theme)
+		m_combo_color_theme.AddString(theme_name);
 
-	m_combo_color_theme.SetCurSel(0);
+	int color_theme = theApp.GetProfileInt(_T("setting"), _T("color theme"), CSCColorTheme::color_theme_default);
+	m_combo_color_theme.SetCurSel(color_theme);
+
 
 	m_tooltip.Create(this);// , TTS_ALWAYSTIP | TTS_NOPREFIX | TTS_NOANIMATE);
 
@@ -867,6 +866,8 @@ void Ctest_vtlistctrlexDlg::OnCbnSelchangeComboColorTheme()
 
 	if (index < 0 || index >= m_combo_color_theme.GetCount())
 		return;
+
+	theApp.WriteProfileInt(_T("setting"), _T("color theme"), index);
 
 	m_tree.set_color_theme(index);
 	m_list.set_color_theme(index);
