@@ -211,11 +211,14 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	41\
 	"));
 	m_tree.expand_all();
+	m_tree.set_color_theme(color_theme);
 
 	m_tree0.set_as_shell_treectrl(&m_ShellImageList, true);
 	m_tree1.set_as_shell_treectrl(&m_ShellImageList, true);
 	m_tree0.set_use_drag_and_drop(true);
 	m_tree1.set_use_drag_and_drop(true);
+	m_tree0.set_color_theme(color_theme);
+	m_tree1.set_color_theme(color_theme);
 
 	logWrite(_T("5"));
 
@@ -243,6 +246,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_list_shell0.load_column_width(&theApp, _T("shell list0"));
 	m_list_shell0.set_path(_T("C:\\"));
 	m_list_shell0.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
+	m_list_shell0.set_color_theme(color_theme);
 
 	logWrite(_T("8"));
 
@@ -252,6 +256,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_list_shell1.load_column_width(&theApp, _T("shell list1"));
 	m_list_shell1.set_path(_T("c:\\"));
 	m_list_shell1.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
+	m_list_shell0.set_color_theme(color_theme);
 
 	logWrite(_T("9"));
 	m_path0.set_shell_imagelist(&m_ShellImageList);
@@ -278,6 +283,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	//일반 ListCtrl의 초기설정
 	init_list(&m_list);
+	m_list.set_color_theme(color_theme);
 
 	RestoreWindowPosition(&theApp, this);
 
