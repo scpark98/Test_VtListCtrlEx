@@ -256,7 +256,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_list_shell1.load_column_width(&theApp, _T("shell list1"));
 	m_list_shell1.set_path(_T("c:\\"));
 	m_list_shell1.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
-	m_list_shell0.set_color_theme(color_theme);
+	m_list_shell1.set_color_theme(color_theme);
 
 	logWrite(_T("9"));
 	m_path0.set_shell_imagelist(&m_ShellImageList);
