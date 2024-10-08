@@ -33,7 +33,7 @@ Ctest_vtlistctrlexApp::Ctest_vtlistctrlexApp()
 // The one and only Ctest_vtlistctrlexApp object
 
 Ctest_vtlistctrlexApp theApp;
-SCLog gLog;
+CSCLog gLog;
 
 // Ctest_vtlistctrlexApp initialization
 

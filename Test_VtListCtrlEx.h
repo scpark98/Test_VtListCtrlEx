@@ -32,4 +32,4 @@ public:
 };
 
 extern Ctest_vtlistctrlexApp theApp;
-extern SCLog gLog;
+extern CSCLog gLog;
