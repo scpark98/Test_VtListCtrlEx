@@ -88,8 +88,8 @@ BEGIN_MESSAGE_MAP(Ctest_vtlistctrlexDlg, CDialogEx)
 	ON_NOTIFY(LVN_KEYDOWN, IDC_LIST_SHELL0, &Ctest_vtlistctrlexDlg::OnLvnKeydownListShell0)
 	ON_NOTIFY(NM_RCLICK, IDC_LIST_SHELL0, &Ctest_vtlistctrlexDlg::OnNMRClickListShell0)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SHELL0, &Ctest_vtlistctrlexDlg::OnNMDblclkListShell0)
-	ON_REGISTERED_MESSAGE(Message_CPathCtrl, &Ctest_vtlistctrlexDlg::on_message_pathctrl)
-	ON_REGISTERED_MESSAGE(Message_CVtListCtrlEx, &Ctest_vtlistctrlexDlg::on_message_vtlistctrlex)
+	ON_REGISTERED_MESSAGE(Message_CPathCtrl, &Ctest_vtlistctrlexDlg::on_message_CPathCtrl)
+	ON_REGISTERED_MESSAGE(Message_CVtListCtrlEx, &Ctest_vtlistctrlexDlg::on_message_CVtListCtrlEx)
 	ON_REGISTERED_MESSAGE(Message_CSCTreeCtrl, &Ctest_vtlistctrlexDlg::on_message_CSCTreeCtrl)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_SHELL1, &Ctest_vtlistctrlexDlg::OnNMDblclkListShell1)
 	ON_CBN_SELCHANGE(IDC_COMBO_COLOR_THEME, &Ctest_vtlistctrlexDlg::OnCbnSelchangeComboColorTheme)
@@ -227,8 +227,8 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	logWrite(_T("6"));
 
-	m_tree0.select_folder(_T("C:\\"));
-	m_tree1.select_folder(_T("c:\\"));
+	m_tree0.set_path(_T("C:\\"));
+	m_tree1.set_path(_T("c:\\"));
 
 	//SetWindowTheme()을 적용하면 color_theme_default 외에는 색상이 올바로 표시되지 않는다
 	//m_tree0.set_color_theme(CSCTreeCtrl::color_theme_dark);
@@ -240,8 +240,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	logWrite(_T("7"));
 
-	m_list_shell0.set_as_shell_listctrl();
-	m_list_shell0.set_shell_imagelist(&m_ShellImageList);
+	m_list_shell0.set_as_shell_listctrl(&m_ShellImageList, true);
 	m_list_shell0.use_drag_and_drop(true);
 	m_list_shell0.load_column_width(&theApp, _T("shell list0"));
 	m_list_shell0.set_path(_T("C:\\"));
@@ -250,8 +249,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	logWrite(_T("8"));
 
-	m_list_shell1.set_as_shell_listctrl();
-	m_list_shell1.set_shell_imagelist(&m_ShellImageList);
+	m_list_shell1.set_as_shell_listctrl(&m_ShellImageList, true);
 	m_list_shell1.use_drag_and_drop(true);
 	m_list_shell1.load_column_width(&theApp, _T("shell list1"));
 	m_list_shell1.set_path(_T("c:\\"));
@@ -640,7 +638,7 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell0(NMHDR* pNMHDR, LRESULT* pResult
 																m_ShellImageList.get_csidl_map());
 				m_list_shell0.set_path(new_path);
 				m_path0.set_path(new_path);
-				m_tree0.select_folder(new_path);
+				m_tree0.set_path(new_path);
 			}
 			else
 			{
@@ -649,7 +647,7 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell0(NMHDR* pNMHDR, LRESULT* pResult
 				{
 					m_list_shell0.set_path(new_path);
 					m_path0.set_path(new_path);
-					m_tree0.select_folder(new_path);
+					m_tree0.set_path(new_path);
 				}
 			}
 		}
@@ -680,7 +678,7 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell1(NMHDR* pNMHDR, LRESULT* pResult
 																m_ShellImageList.get_csidl_map());
 				m_list_shell1.set_path(new_path);
 				m_path1.set_path(new_path);
-				m_tree1.select_folder(new_path);
+				m_tree1.set_path(new_path);
 			}
 			else
 			{
@@ -689,7 +687,7 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell1(NMHDR* pNMHDR, LRESULT* pResult
 				{
 					m_list_shell1.set_path(new_path);
 					m_path1.set_path(new_path);
-					m_tree1.select_folder(new_path);
+					m_tree1.set_path(new_path);
 				}
 			}
 		}
@@ -698,7 +696,7 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell1(NMHDR* pNMHDR, LRESULT* pResult
 	*pResult = 0;
 }
 
-LRESULT	Ctest_vtlistctrlexDlg::on_message_pathctrl(WPARAM wParam, LPARAM lParam)
+LRESULT	Ctest_vtlistctrlexDlg::on_message_CPathCtrl(WPARAM wParam, LPARAM lParam)
 {
 	CPathCtrlMessage* pMsg = (CPathCtrlMessage*)wParam;
 
@@ -708,7 +706,7 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_pathctrl(WPARAM wParam, LPARAM lParam)
 		if (pMsg->message == CPathCtrl::message_pathctrl_path_changed)
 		{
 			m_list_shell0.set_path(pMsg->cur_path);// m_path0.get_full_path());
-			m_tree0.select_folder(pMsg->cur_path);
+			m_tree0.set_path(pMsg->cur_path);
 		}
 	}
 	else if (pMsg->pThis == &m_path1)
@@ -717,18 +715,33 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_pathctrl(WPARAM wParam, LPARAM lParam)
 		if (pMsg->message == CPathCtrl::message_pathctrl_path_changed)
 		{
 			m_list_shell1.set_path(pMsg->cur_path);// m_path1.get_full_path());
-			m_tree1.select_folder(pMsg->cur_path);
+			m_tree1.set_path(pMsg->cur_path);
 		}
 	}
 
 	return 0;
 }
 
-LRESULT	Ctest_vtlistctrlexDlg::on_message_vtlistctrlex(WPARAM wParam, LPARAM lParam)
+LRESULT	Ctest_vtlistctrlexDlg::on_message_CVtListCtrlEx(WPARAM wParam, LPARAM lParam)
 {
 	CVtListCtrlExMessage* msg = (CVtListCtrlExMessage*)wParam;
 
-	if (msg->message == CVtListCtrlEx::message_drag_and_drop)
+	if (msg->message == CVtListCtrlEx::message_path_changed)
+	{
+		CString path = *(CString*)lParam;
+
+		if (msg->pThis == &m_list_shell0)
+		{
+			m_tree0.set_path(path);
+			m_path0.set_path(path);
+		}
+		else if (msg->pThis == &m_list_shell1)
+		{
+			m_tree1.set_path(path);
+			m_path1.set_path(path);
+		}
+	}
+	else if (msg->message == CVtListCtrlEx::message_drag_and_drop)
 	{
 		//다른 앱에서 드롭된 경우는 대상 컨트롤들에 남아있는 drophilited 항목들의 상태를 지워줘야 한다.
 		//원래는 마지막 drophilited했던 컨트롤을 기억시켰다가 해당 컨트롤만 해줘야 한다.

@@ -38,8 +38,8 @@ public:
 		list_memo,
 	};
 
-	LRESULT			on_message_vtlistctrlex(WPARAM wParam, LPARAM lParam);
-	LRESULT			on_message_pathctrl(WPARAM wParam, LPARAM lParam);
+	LRESULT			on_message_CVtListCtrlEx(WPARAM wParam, LPARAM lParam);
+	LRESULT			on_message_CPathCtrl(WPARAM wParam, LPARAM lParam);
 	LRESULT			on_message_CSCTreeCtrl(WPARAM wParam, LPARAM lParam);
 
 	//Shell의 imagelist 및 shell과 관계된 멤버 제공
