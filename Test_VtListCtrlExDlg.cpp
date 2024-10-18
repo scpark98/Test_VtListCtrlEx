@@ -304,7 +304,9 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	plist->set_header_height(24);
 
 	//
-	plist->set_use_own_imagelist(false);
+	plist->set_use_own_imagelist(true);
+	plist->set_shell_imagelist(&m_ShellImageList);
+
 	plist->set_line_height(20);
 
 	//plist->set_column_text_align(0, HDF_CENTER);
@@ -321,6 +323,8 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	plist->set_column_data_type(list_score, CVtListCtrlEx::column_data_type_progress);
 	plist->allow_edit();
 
+	//RandomText를 이용한 테스트 데이터 추가
+	/*
 	srand(time(NULL));
 
 	for (int i = 0; i < 100; i++)
@@ -334,9 +338,19 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 		//m_list.set_text_color(index, 2, RGB(0, 0, 255-index));//random19937(RGB(0,0,0), RGB(255,255,255)));
 		plist->set_text(index, list_memo, RandomText::GetName());
 	}
+	*/
 
-	plist->set_item_color(10, 1, red, blue);
-	plist->set_item_color(3, 0, deeppink, dodgerblue);
+	//수동 테스트 데이터 추가
+	plist->add_item(_T("a.txt"));
+	plist->add_item(_T("a.mp4"));
+	plist->add_item(_T("a.html"));
+	plist->add_item(_T("a.exe"));
+	plist->add_item(_T("a.dat"));
+	plist->add_item(_T("a.ini"));
+
+
+	plist->set_item_color(2, 1, red, blue);
+	plist->set_item_color(4, 0, deeppink, dodgerblue);
 
 	//SetTimer(timer_add_data, 100, NULL);
 }
