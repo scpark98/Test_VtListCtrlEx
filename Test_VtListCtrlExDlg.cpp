@@ -102,6 +102,7 @@ BEGIN_MESSAGE_MAP(Ctest_vtlistctrlexDlg, CDialogEx)
 	ON_NOTIFY(TVN_ENDLABELEDIT, IDC_TREE1, &Ctest_vtlistctrlexDlg::OnTvnEndlabelEditTree1)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE0, &Ctest_vtlistctrlexDlg::OnTvnSelchangedTree0)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE1, &Ctest_vtlistctrlexDlg::OnTvnSelchangedTree1)
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_LIST, &Ctest_vtlistctrlexDlg::OnLvnItemchangedList)
 END_MESSAGE_MAP()
 
 
@@ -169,12 +170,9 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	logWrite(_T("1"));
 
 	//shellimagelist를 초기화 한 후 트리, 리스트에서 공통으로 사용한다.
-	m_ShellImageList.Initialize();
+	m_shell_imagelist.Initialize();
 
-	logWrite(_T("2"));
-
-
-	logWrite(_T("3"));
+	CString default_path = _T("c:\\");
 
 	logWrite(_T("4"));
 
@@ -213,12 +211,15 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_tree.expand_all();
 	m_tree.set_color_theme(color_theme);
 
-	m_tree0.set_as_shell_treectrl(&m_ShellImageList, true);
-	m_tree1.set_as_shell_treectrl(&m_ShellImageList, true);
+	m_tree0.set_as_shell_treectrl(&m_shell_imagelist, true);
+	m_tree1.set_as_shell_treectrl(&m_shell_imagelist, true);
 	m_tree0.set_use_drag_and_drop(true);
 	m_tree1.set_use_drag_and_drop(true);
 	m_tree0.set_color_theme(color_theme);
 	m_tree1.set_color_theme(color_theme);
+	m_tree0.set_path(default_path);
+	m_tree1.set_path(default_path);
+
 
 	logWrite(_T("5"));
 
@@ -226,9 +227,6 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_tree1.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
 
 	logWrite(_T("6"));
-
-	m_tree0.set_path(_T("C:\\"));
-	m_tree1.set_path(_T("c:\\"));
 
 	//SetWindowTheme()을 적용하면 color_theme_default 외에는 색상이 올바로 표시되지 않는다
 	//m_tree0.set_color_theme(CSCTreeCtrl::color_theme_dark);
@@ -240,28 +238,28 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	logWrite(_T("7"));
 
-	m_list_shell0.set_as_shell_listctrl(&m_ShellImageList, true);
-	m_list_shell0.use_drag_and_drop(true);
+	m_list_shell0.set_as_shell_listctrl(&m_shell_imagelist, true);
+	m_list_shell0.set_path(default_path);
+	m_list_shell0.set_use_drag_and_drop();
 	m_list_shell0.load_column_width(&theApp, _T("shell list0"));
-	m_list_shell0.set_path(_T("C:\\"));
 	m_list_shell0.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
 	m_list_shell0.set_color_theme(color_theme);
 
 	logWrite(_T("8"));
 
-	m_list_shell1.set_as_shell_listctrl(&m_ShellImageList, true);
-	m_list_shell1.use_drag_and_drop(true);
+	m_list_shell1.set_as_shell_listctrl(&m_shell_imagelist, true);
+	m_list_shell1.set_path(default_path);
+	m_list_shell1.set_use_drag_and_drop();
 	m_list_shell1.load_column_width(&theApp, _T("shell list1"));
-	m_list_shell1.set_path(_T("c:\\"));
 	m_list_shell1.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
 	m_list_shell1.set_color_theme(color_theme);
 
 	logWrite(_T("9"));
-	m_path0.set_shell_imagelist(&m_ShellImageList);
-	m_path0.set_path(_T("C:\\"));
+	m_path0.set_shell_imagelist(&m_shell_imagelist);
+	m_path1.set_shell_imagelist(&m_shell_imagelist);
 
-	m_path1.set_shell_imagelist(&m_ShellImageList);
-	m_path1.set_path(_T("c:\\"));
+	m_path0.set_path(default_path);
+	m_path1.set_path(default_path);
 
 	logWrite(_T("10"));
 	//for test
@@ -305,7 +303,7 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 
 	//
 	plist->set_use_own_imagelist(true);
-	plist->set_shell_imagelist(&m_ShellImageList);
+	plist->set_shell_imagelist(&m_shell_imagelist);
 
 	plist->set_line_height(20);
 
@@ -320,7 +318,7 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	plist->set_header_text_align(3, HDF_LEFT);
 	*/
 	//m_list.set_column_data_type(list_score, CVtListCtrlEx::column_data_type_percentage_grid);
-	plist->set_column_data_type(list_score, CVtListCtrlEx::column_data_type_progress);
+	plist->set_column_data_type(col_score, CVtListCtrlEx::column_data_type_progress);
 	plist->allow_edit();
 
 	//RandomText를 이용한 테스트 데이터 추가
@@ -341,17 +339,22 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	*/
 
 	//수동 테스트 데이터 추가
-	plist->add_item(_T("a.txt"));
-	plist->add_item(_T("a.mp4"));
-	plist->add_item(_T("a.html"));
-	plist->add_item(_T("a.exe"));
-	plist->add_item(_T("a.dat"));
-	plist->add_item(_T("a.ini"));
+	plist->add_item(_T("0.txt"));
+	plist->add_item(_T("1.mp4"));
+	plist->add_item(_T("2.html"));
+	plist->add_item(_T("3.exe"));
+	plist->add_item(_T("4.dat"));
+	plist->add_item(_T("5.ini"));
 
+	plist->set_text(0, col_score, _T("50"));
+
+	for (int i = 0; i < plist->size(); i++)
+		plist->SetItemData(i, i);
 
 	plist->set_item_color(2, 1, red, blue);
 	plist->set_item_color(4, 0, deeppink, dodgerblue);
 
+	plist->set_use_drag_and_drop();
 	//SetTimer(timer_add_data, 100, NULL);
 }
 
@@ -494,7 +497,7 @@ void Ctest_vtlistctrlexDlg::OnLvnEndlabeleditListShell0(NMHDR* pNMHDR, LRESULT* 
 		newfile.Format(_T("%ws\\%s"), m_list_shell0.get_path(), text);
 
 		//local이면 직접 파일명을 rename하고
-		if (m_list_shell0.is_shell_listctrl_local())
+		if (m_list_shell0.is_local())
 		{
 			if (!MoveFile(oldfile, newfile))
 			{
@@ -608,7 +611,7 @@ void Ctest_vtlistctrlexDlg::OnLvnKeydownListShell0(NMHDR* pNMHDR, LRESULT* pResu
 
 		//file.Format(_T("%s\\%s"), m_list_shell.get_path(), )
 		//local이라면 파일 삭제, 리스트 삭제하면 되고
-		if (m_list_shell0.is_shell_listctrl_local())
+		if (m_list_shell0.is_local())
 		{
 			m_list_shell0.delete_selected_items();
 		}
@@ -642,14 +645,20 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell0(NMHDR* pNMHDR, LRESULT* pResult
 
 	if (m_list_shell0.is_shell_listctrl())
 	{
-		if (m_list_shell0.is_shell_listctrl_local())
+		if (m_list_shell0.is_local())
 		{
-			CString new_path;
-			int csidl = m_ShellImageList.get_csidl_by_shell_known_string(m_list_shell0.get_path());
+			CString new_path = m_list_shell0.get_path() + _T("\\") + m_list_shell0.get_text(index, CVtListCtrlEx::col_filename);
+
+			m_list_shell0.set_path(new_path);
+			m_path0.set_path(new_path);
+			m_tree0.set_path(new_path);
+
+			/*
+			int csidl = m_shell_imagelist.m_volume[0].get_csidl(m_list_shell0.get_path());
 			if (csidl == CSIDL_DRIVES)
 			{
 				new_path = convert_special_folder_to_real_path(m_list_shell0.get_text(index, CVtListCtrlEx::col_filename),
-																m_ShellImageList.get_csidl_map());
+					m_shell_imagelist.m_volume[0].get_label_map());
 				m_list_shell0.set_path(new_path);
 				m_path0.set_path(new_path);
 				m_tree0.set_path(new_path);
@@ -664,6 +673,7 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell0(NMHDR* pNMHDR, LRESULT* pResult
 					m_tree0.set_path(new_path);
 				}
 			}
+			*/
 		}
 	}
 
@@ -682,14 +692,13 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell1(NMHDR* pNMHDR, LRESULT* pResult
 
 	if (m_list_shell1.is_shell_listctrl())
 	{
-		if (m_list_shell1.is_shell_listctrl_local())
+		if (m_list_shell1.is_local())
 		{
 			CString new_path;
-			int csidl = m_ShellImageList.get_csidl_by_shell_known_string(m_list_shell1.get_path());
+			int csidl = m_shell_imagelist.m_volume[0].get_csidl(m_list_shell1.get_path());
 			if (csidl == CSIDL_DRIVES)
 			{
-				new_path = convert_special_folder_to_real_path(m_list_shell1.get_text(index, CVtListCtrlEx::col_filename),
-																m_ShellImageList.get_csidl_map());
+				new_path = convert_special_folder_to_real_path(m_list_shell1.get_text(index, CVtListCtrlEx::col_filename));// , m_shell_imagelist.m_volume[0].get_label_map());
 				m_list_shell1.set_path(new_path);
 				m_path1.set_path(new_path);
 				m_tree1.set_path(new_path);
@@ -870,25 +879,6 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_CSCTreeCtrl(WPARAM wParam, LPARAM lPar
 
 		return 0;
 	}
-	else if (msg->message == CSCTreeCtrl::message_selchanged)
-	{
-		CString path = *(CString*)lParam;
-
-		//AfxMessageBox(path);
-		
-		if (msg->pThis == &m_tree0)
-		{
-			m_list_shell0.set_path(path);
-			m_path0.set_path(path);
-		}
-		else if (msg->pThis == &m_tree1)
-		{
-			m_list_shell1.set_path(path);
-			m_path1.set_path(path);
-		}
-
-		//AfxMessageBox(_T("set_path end"));
-	}
 
 	return 0;
 }
@@ -944,13 +934,13 @@ void Ctest_vtlistctrlexDlg::OnTimer(UINT_PTR nIDEvent)
 	if (nIDEvent == timer_add_data)
 	{
 		int index = m_list.add_item(i2S(m_list.size()));
-		m_list.set_text(index, list_name, RandomText::GetName());
+		m_list.set_text(index, col_name, RandomText::GetName());
 		//m_list.set_text_color(index, 0, RGB(index, index, index));//random19937(RGB(0,0,0), RGB(255,255,255)));
-		m_list.set_text(index, list_slogan, RandomText::GetSlogan());
+		m_list.set_text(index, col_slogan, RandomText::GetSlogan());
 		//m_list.set_text_color(index, index, RGB(indexi, 0, 0));//random19937(RGB(0,0,0), RGB(255,255,255)));
-		m_list.set_text(index, list_score, i2S(random19937(0, 100)));
+		m_list.set_text(index, col_score, i2S(random19937(0, 100)));
 		//m_list.set_text_color(index, 2, RGB(0, 0, 255-index));//random19937(RGB(0,0,0), RGB(255,255,255)));
-		m_list.set_text(index, list_memo, RandomText::GetName());
+		m_list.set_text(index, col_memo, RandomText::GetName());
 	}
 
 	CDialogEx::OnTimer(nIDEvent);
@@ -1015,5 +1005,15 @@ void Ctest_vtlistctrlexDlg::OnTvnSelchangedTree1(NMHDR* pNMHDR, LRESULT* pResult
 	m_list_shell1.set_path(path);
 	m_path1.set_path(path);
 
+	*pResult = 0;
+}
+
+
+void Ctest_vtlistctrlexDlg::OnLvnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	TRACE(_T("item = %d, data = %d\n"), pNMLV->iItem, m_list.GetItemData(pNMLV->iItem));
 	*pResult = 0;
 }

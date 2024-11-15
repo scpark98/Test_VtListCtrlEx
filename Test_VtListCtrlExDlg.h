@@ -31,11 +31,11 @@ public:
 
 	enum list_column
 	{
-		list_no = 0,
-		list_name,
-		list_slogan,
-		list_score,
-		list_memo,
+		col_no = 0,
+		col_name,
+		col_slogan,
+		col_score,
+		col_memo,
 	};
 
 	LRESULT			on_message_CVtListCtrlEx(WPARAM wParam, LPARAM lParam);
@@ -43,7 +43,7 @@ public:
 	LRESULT			on_message_CSCTreeCtrl(WPARAM wParam, LPARAM lParam);
 
 	//Shell의 imagelist 및 shell과 관계된 멤버 제공
-	CShellImageList		m_ShellImageList;
+	CShellImageList		m_shell_imagelist;
 
 protected:
 	CToolTipCtrl	m_tooltip;
@@ -104,4 +104,5 @@ public:
 	afx_msg void OnTvnEndlabelEditTree1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTvnSelchangedTree0(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTvnSelchangedTree1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnLvnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult);
 };
