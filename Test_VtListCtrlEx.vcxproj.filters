@@ -102,6 +102,9 @@
     <ClInclude Include="..\..\Common\CButton\GdiButton\GdiButton.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Common\CEdit\SCEdit\SCEdit.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Test_VtListCtrlEx.cpp">
@@ -168,6 +171,9 @@
       <Filter>Common\SCMenuBar</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\CButton\GdiButton\GdiButton.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\CEdit\SCEdit\SCEdit.cpp">
       <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>

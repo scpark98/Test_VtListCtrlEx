@@ -278,8 +278,8 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 
 	//일반 ListCtrl의 초기설정
-	init_list(&m_list);
 	m_list.set_color_theme(color_theme);
+	init_list(&m_list);
 
 	RestoreWindowPosition(&theApp, this);
 
@@ -319,6 +319,9 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	*/
 	//m_list.set_column_data_type(list_score, CVtListCtrlEx::column_data_type_percentage_grid);
 	plist->set_column_data_type(col_score, CVtListCtrlEx::column_data_type_progress);
+	plist->show_progress_text();
+	plist->set_progress_color(Gdiplus::Color(79, 187, 255));
+	//plist->set_progress_text_color(Gdiplus::Color::Black);
 	plist->allow_edit();
 
 	//RandomText를 이용한 테스트 데이터 추가
@@ -346,13 +349,21 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	plist->add_item(_T("4.dat"));
 	plist->add_item(_T("5.ini"));
 
-	plist->set_text(0, col_score, _T("50"));
+	plist->set_text(0, col_score, _T("50%"));
+	plist->set_text(1, col_score, _T("fail"));
 
 	for (int i = 0; i < plist->size(); i++)
 		plist->SetItemData(i, i);
 
-	plist->set_item_color(2, 1, red, blue);
-	plist->set_item_color(4, 0, deeppink, dodgerblue);
+	plist->set_text_color(0, col_score, Gdiplus::Color::Red);
+	plist->set_back_color(1, col_score, Gdiplus::Color::Pink);
+
+	//plist->set_item_color(2, 0, Gdiplus::Color::Red, Gdiplus::Color::Blue);
+	//plist->set_text_color(3, 0, Gdiplus::Color::Red);
+	//plist->set_back_color(3, 1, Gdiplus::Color::Red);
+	//plist->set_item_color(4, 0, Gdiplus::Color::DeepPink, Gdiplus::Color::DodgerBlue);
+	//plist->set_text_color(5, 0, Gdiplus::Color::DeepPink);
+	//plist->set_back_color(5, 1, Gdiplus::Color::DeepPink);
 
 	plist->set_use_drag_and_drop();
 	//SetTimer(timer_add_data, 100, NULL);
@@ -600,6 +611,15 @@ void Ctest_vtlistctrlexDlg::OnLvnKeydownListShell0(NMHDR* pNMHDR, LRESULT* pResu
 		std::deque<int> dqSelected;
 
 		m_list_shell0.get_selected_items(&dqSelected);
+
+		if (dqSelected.size())
+		{
+			if (is_protected(m_list_shell0.get_path(dqSelected[0]), m_list_shell0.get_shell_imagelist(), 0))
+			{
+				TRACE(_T("protected\n"));
+				return;
+			}
+		}
 
 		if (dqSelected.size() == 1)
 			str.Format(_T("선택된 항목을 삭제할까요?"));
