@@ -255,8 +255,8 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_list_shell1.set_color_theme(color_theme);
 
 	logWrite(_T("9"));
-	m_path0.set_shell_imagelist(&m_shell_imagelist);
-	m_path1.set_shell_imagelist(&m_shell_imagelist);
+	m_path0.set_shell_imagelist(&m_shell_imagelist, true);
+	m_path1.set_shell_imagelist(&m_shell_imagelist, true);
 
 	m_path0.set_path(default_path);
 	m_path1.set_path(default_path);
@@ -325,22 +325,30 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	plist->allow_edit();
 
 	//RandomText를 이용한 테스트 데이터 추가
-	/*
 	srand(time(NULL));
 
-	for (int i = 0; i < 100; i++)
-	{
-		int index = m_list.add_item(i2S(i));
-		plist->set_text(index, list_name, RandomText::GetName());
-		//m_list.set_text_color(index, 0, RGB(index, index, index));//random19937(RGB(0,0,0), RGB(255,255,255)));
-		plist->set_text(index, list_slogan, RandomText::GetSlogan());
-		//m_list.set_text_color(index, index, RGB(indexi, 0, 0));//random19937(RGB(0,0,0), RGB(255,255,255)));
-		plist->set_text(index, list_score, i2S(random19937(0, 100)));
-		//m_list.set_text_color(index, 2, RGB(0, 0, 255-index));//random19937(RGB(0,0,0), RGB(255,255,255)));
-		plist->set_text(index, list_memo, RandomText::GetName());
-	}
-	*/
+	//debug mode에서
+	//10,000개 추가 시 invalidate = false, SetRedraw(FALSE) 할 경우 약 6초, true로 할 경우는 약 26초 소요
 
+	long t0 = clock();
+	bool make_invalidate = true;
+	//m_list.SetRedraw(FALSE);
+
+	for (int i = 0; i < 10000; i++)
+	{
+		int index = m_list.add_item(i2S(i), -1, false, make_invalidate);
+		plist->set_text(index, col_name, RandomText::GetName(), make_invalidate);
+		//m_list.set_text_color(index, 0, RGB(index, index, index));//random19937(RGB(0,0,0), RGB(255,255,255)));
+		plist->set_text(index, col_slogan, RandomText::GetSlogan(), make_invalidate);
+		//m_list.set_text_color(index, index, RGB(indexi, 0, 0));//random19937(RGB(0,0,0), RGB(255,255,255)));
+		plist->set_text(index, col_score, i2S(random19937(0, 100)), make_invalidate);
+		//m_list.set_text_color(index, 2, RGB(0, 0, 255-index));//random19937(RGB(0,0,0), RGB(255,255,255)));
+		plist->set_text(index, col_memo, RandomText::GetName(), make_invalidate);
+	}
+
+	//m_list.SetRedraw(TRUE);
+	SetWindowText(i2S(clock() - t0));
+	/*
 	//수동 테스트 데이터 추가
 	plist->add_item(_T("0.txt"));
 	plist->add_item(_T("1.mp4"));
@@ -357,7 +365,7 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 
 	plist->set_text_color(0, col_score, Gdiplus::Color::Red);
 	plist->set_back_color(1, col_score, Gdiplus::Color::Pink);
-
+	*/
 	//plist->set_item_color(2, 0, Gdiplus::Color::Red, Gdiplus::Color::Blue);
 	//plist->set_text_color(3, 0, Gdiplus::Color::Red);
 	//plist->set_back_color(3, 1, Gdiplus::Color::Red);
@@ -833,7 +841,7 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_CVtListCtrlEx(WPARAM wParam, LPARAM lP
 			if (hItem)
 			{
 				droppedItemText = pDropTreeCtrl->GetItemText(hItem);
-				TRACE(_T("dropped on = %s (%s)\n"), droppedItemText, pDropTreeCtrl->get_fullpath(hItem));
+				TRACE(_T("dropped on = %s (%s)\n"), droppedItemText, pDropTreeCtrl->get_path(hItem));
 
 				//필요한 모든 처리가 끝나면 drophilited 표시를 없애준다.
 				//pDropTreeCtrl->SetItemState(hItem, 0, TVIS_DROPHILITED);	<= 이걸로는 해제 안된다.
@@ -1007,7 +1015,7 @@ void Ctest_vtlistctrlexDlg::OnTvnSelchangedTree0(NMHDR* pNMHDR, LRESULT* pResult
 {
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CString path = m_tree0.get_fullpath();
+	CString path = m_tree0.get_path();
 
 	m_list_shell0.set_path(path);
 	m_path0.set_path(path);
@@ -1020,7 +1028,7 @@ void Ctest_vtlistctrlexDlg::OnTvnSelchangedTree1(NMHDR* pNMHDR, LRESULT* pResult
 {
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CString path = m_tree1.get_fullpath();
+	CString path = m_tree1.get_path();
 
 	m_list_shell1.set_path(path);
 	m_path1.set_path(path);
