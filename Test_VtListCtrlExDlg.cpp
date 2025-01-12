@@ -212,13 +212,15 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_tree.set_color_theme(color_theme);
 
 	m_tree0.set_as_shell_treectrl(&m_shell_imagelist, true);
-	m_tree1.set_as_shell_treectrl(&m_shell_imagelist, true);
 	m_tree0.set_use_drag_and_drop(true);
-	m_tree1.set_use_drag_and_drop(true);
 	m_tree0.set_color_theme(color_theme);
-	m_tree1.set_color_theme(color_theme);
 	m_tree0.set_path(default_path);
+	m_tree0.set_use_popup_menu();
+	m_tree1.set_as_shell_treectrl(&m_shell_imagelist, true);
+	m_tree1.set_use_drag_and_drop(true);
+	m_tree1.set_color_theme(color_theme);
 	m_tree1.set_path(default_path);
+	m_tree1.set_use_popup_menu();
 
 
 	logWrite(_T("5"));
@@ -331,10 +333,10 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	//10,000개 추가 시 invalidate = false, SetRedraw(FALSE) 할 경우 약 6초, true로 할 경우는 약 26초 소요
 
 	long t0 = clock();
-	bool make_invalidate = true;
+	bool make_invalidate = false;
 	//m_list.SetRedraw(FALSE);
 
-	for (int i = 0; i < 10000; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		int index = m_list.add_item(i2S(i), -1, false, make_invalidate);
 		plist->set_text(index, col_name, RandomText::GetName(), make_invalidate);
@@ -989,6 +991,9 @@ void Ctest_vtlistctrlexDlg::OnTvnEndlabelEditTree0(NMHDR* pNMHDR, LRESULT* pResu
 	LPNMTVDISPINFO pTVDispInfo = reinterpret_cast<LPNMTVDISPINFO>(pNMHDR);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	TRACE(_T("%s\n"), __function__);
+
+	//m_tree0.SetItemText(m_tree0.GetSelectedItem(), m_tree0.get_edit_new_text());
+	//m_list_shell0.refresh_list();
 	*pResult = 0;
 }
 
@@ -1007,6 +1012,8 @@ void Ctest_vtlistctrlexDlg::OnTvnEndlabelEditTree1(NMHDR* pNMHDR, LRESULT* pResu
 	LPNMTVDISPINFO pTVDispInfo = reinterpret_cast<LPNMTVDISPINFO>(pNMHDR);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	TRACE(_T("%s\n"), __function__);
+	//m_tree1.SetItemText(m_tree1.GetSelectedItem(), m_tree1.get_edit_new_text());
+	//m_list_shell1.refresh_list();
 	*pResult = 0;
 }
 
