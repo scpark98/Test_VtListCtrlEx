@@ -500,7 +500,7 @@ void Ctest_vtlistctrlexDlg::OnLvnEndlabeleditListShell0(NMHDR* pNMHDR, LRESULT* 
 	int item = m_list_shell0.get_recent_edit_item();
 	int subItem = m_list_shell0.get_recent_edit_subitem();
 	CString	text = m_list_shell0.get_text(item, subItem);
-	CString oldtext = m_list_shell0.get_old_text();
+	CString oldtext = m_list_shell0.get_edit_old_text();
 	CString oldfile;
 	CString newfile;
 
@@ -514,7 +514,7 @@ void Ctest_vtlistctrlexDlg::OnLvnEndlabeleditListShell0(NMHDR* pNMHDR, LRESULT* 
 
 	if (m_list_shell0.is_shell_listctrl())
 	{ 
-		oldfile.Format(_T("%ws\\%s"), m_list_shell0.get_path(), m_list_shell0.get_old_text());
+		oldfile.Format(_T("%ws\\%s"), m_list_shell0.get_path(), m_list_shell0.get_edit_old_text());
 		newfile.Format(_T("%ws\\%s"), m_list_shell0.get_path(), text);
 
 		//local이면 직접 파일명을 rename하고
@@ -908,6 +908,14 @@ LRESULT	Ctest_vtlistctrlexDlg::on_message_CSCTreeCtrl(WPARAM wParam, LPARAM lPar
 		}
 
 		return 0;
+	}
+	else if (msg->message == CSCTreeCtrl::message_request_rename)
+	{
+
+	}
+	else if (msg->message == CSCTreeCtrl::message_rename_duplicated)
+	{
+		AfxMessageBox(msg->param1 + _T("\n동일한 이름의 폴더가 존재합니다."));
 	}
 
 	return 0;
