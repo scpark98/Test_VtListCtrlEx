@@ -322,6 +322,7 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	//m_list.set_column_data_type(list_score, CVtListCtrlEx::column_data_type_percentage_grid);
 	plist->set_column_data_type(col_score, CVtListCtrlEx::column_data_type_progress);
 	plist->show_progress_text();
+	plist->set_back_alternate_color(true, Gdiplus::Color(242, 242, 242));
 	plist->set_progress_color(Gdiplus::Color(79, 187, 255));
 	//plist->set_progress_text_color(Gdiplus::Color::Black);
 	plist->allow_edit();
@@ -338,7 +339,7 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 
 	for (int i = 0; i < 100; i++)
 	{
-		int index = m_list.add_item(i2S(i), -1, false, make_invalidate);
+		int index = m_list.add_item(i2S(i) + RandomText::extension(true), -1, false, make_invalidate);
 		plist->set_text(index, col_name, RandomText::GetName(), make_invalidate);
 		//m_list.set_text_color(index, 0, RGB(index, index, index));//random19937(RGB(0,0,0), RGB(255,255,255)));
 		plist->set_text(index, col_slogan, RandomText::GetSlogan(), make_invalidate);
