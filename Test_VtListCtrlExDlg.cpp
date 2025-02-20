@@ -145,15 +145,15 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_resize.Create(this);
 
 	m_resize.Add(IDC_TREE, 0, 0, 0, 100);
-	m_resize.Add(IDC_LIST, 0, 0, 0, 100);
+	m_resize.Add(IDC_LIST, 0, 0, 100, 100);
 
-	m_resize.Add(IDC_PATH0, 0, 0, 50, 0);
-	m_resize.Add(IDC_TREE0, 0, 0, 10, 100);
-	m_resize.Add(IDC_LIST_SHELL0, 10, 0, 40, 100);
+	//m_resize.Add(IDC_PATH0, 0, 0, 50, 0);
+	//m_resize.Add(IDC_TREE0, 0, 0, 10, 100);
+	//m_resize.Add(IDC_LIST_SHELL0, 10, 0, 40, 100);
 
-	m_resize.Add(IDC_PATH1, 50, 0, 50, 0);
-	m_resize.Add(IDC_TREE1, 50, 0, 10, 100);
-	m_resize.Add(IDC_LIST_SHELL1, 60, 0, 40, 100);
+	//m_resize.Add(IDC_PATH1, 50, 0, 50, 0);
+	//m_resize.Add(IDC_TREE1, 50, 0, 10, 100);
+	//m_resize.Add(IDC_LIST_SHELL1, 60, 0, 40, 100);
 
 	std::deque<CString> dq_color_theme = CSCColorTheme::get_color_theme_list();
 	for (auto theme_name : dq_color_theme)
@@ -377,7 +377,7 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	//plist->set_back_color(5, 1, Gdiplus::Color::DeepPink);
 
 	plist->set_use_drag_and_drop();
-	//SetTimer(timer_add_data, 100, NULL);
+	SetTimer(timer_add_test_data, 10, NULL);
 }
 
 void Ctest_vtlistctrlexDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -439,8 +439,11 @@ HCURSOR Ctest_vtlistctrlexDlg::OnQueryDragIcon()
 
 void Ctest_vtlistctrlexDlg::OnBnClickedOk()
 {
+	//if (IsCtrlPressed() && IsShiftPressed())
+	//	SetTimer(timer_add_test_data, 10, NULL);
+
 	//m_tree0.iterate_tree_with_no_recursion();
-	m_tree0.iterate_tree();
+	//m_tree0.iterate_tree();
 	//m_list.set_line_height(40);
 	//m_list.set_header_height(20);
 
@@ -970,9 +973,12 @@ void Ctest_vtlistctrlexDlg::OnEndSession(BOOL bEnding)
 void Ctest_vtlistctrlexDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	if (nIDEvent == timer_add_data)
+	if (nIDEvent == timer_add_test_data)
 	{
-		int index = m_list.add_item(i2S(m_list.size()));
+		static long t0 = clock();
+		long t1 = clock();
+
+		int index = m_list.add_item(i2S(m_list.size()) + _T(" ") + i2S(t1 - t0));
 		m_list.set_text(index, col_name, RandomText::GetName());
 		//m_list.set_text_color(index, 0, RGB(index, index, index));//random19937(RGB(0,0,0), RGB(255,255,255)));
 		m_list.set_text(index, col_slogan, RandomText::GetSlogan());
@@ -980,6 +986,11 @@ void Ctest_vtlistctrlexDlg::OnTimer(UINT_PTR nIDEvent)
 		m_list.set_text(index, col_score, i2S(random19937(0, 100)));
 		//m_list.set_text_color(index, 2, RGB(0, 0, 255-index));//random19937(RGB(0,0,0), RGB(255,255,255)));
 		m_list.set_text(index, col_memo, RandomText::GetName());
+
+		t0 = t1;
+
+		if (m_list.size() == 1000)
+			KillTimer(timer_add_test_data);
 	}
 
 	CDialogEx::OnTimer(nIDEvent);

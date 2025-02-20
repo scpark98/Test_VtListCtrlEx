@@ -50,7 +50,7 @@ protected:
 
 	enum TIMER_ID
 	{
-		timer_add_data = 0,
+		timer_add_test_data = 0,
 	};
 
 // Dialog Data
