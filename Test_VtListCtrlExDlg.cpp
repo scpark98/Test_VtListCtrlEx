@@ -311,8 +311,8 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 
 	//plist->set_column_text_align(0, HDF_CENTER);
 	//plist->set_column_text_align(0, HDF_CENTER);
-	//plist->set_column_text_align(1, HDF_CENTER);
-	//plist->set_column_text_align(2, HDF_CENTER);
+	plist->set_column_text_align(1, HDF_CENTER);
+	plist->set_column_text_align(2, HDF_RIGHT);
 	/*
 	plist->set_header_text_align(0, HDF_CENTER);
 	plist->set_header_text_align(1, HDF_CENTER);
