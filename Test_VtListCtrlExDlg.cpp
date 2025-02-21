@@ -145,15 +145,15 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_resize.Create(this);
 
 	m_resize.Add(IDC_TREE, 0, 0, 0, 100);
-	m_resize.Add(IDC_LIST, 0, 0, 100, 100);
+	//m_resize.Add(IDC_LIST, 0, 0, 100, 100);
 
-	//m_resize.Add(IDC_PATH0, 0, 0, 50, 0);
-	//m_resize.Add(IDC_TREE0, 0, 0, 10, 100);
-	//m_resize.Add(IDC_LIST_SHELL0, 10, 0, 40, 100);
+	m_resize.Add(IDC_PATH0, 0, 0, 50, 0);
+	m_resize.Add(IDC_TREE0, 0, 0, 10, 100);
+	m_resize.Add(IDC_LIST_SHELL0, 10, 0, 40, 100);
 
-	//m_resize.Add(IDC_PATH1, 50, 0, 50, 0);
-	//m_resize.Add(IDC_TREE1, 50, 0, 10, 100);
-	//m_resize.Add(IDC_LIST_SHELL1, 60, 0, 40, 100);
+	m_resize.Add(IDC_PATH1, 50, 0, 50, 0);
+	m_resize.Add(IDC_TREE1, 50, 0, 10, 100);
+	m_resize.Add(IDC_LIST_SHELL1, 60, 0, 40, 100);
 
 	std::deque<CString> dq_color_theme = CSCColorTheme::get_color_theme_list();
 	for (auto theme_name : dq_color_theme)
@@ -170,7 +170,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	logWrite(_T("1"));
 
 	//shellimagelist를 초기화 한 후 트리, 리스트에서 공통으로 사용한다.
-	m_shell_imagelist.Initialize();
+	//m_shell_imagelist.Initialize();
 
 	CString default_path = _T("c:\\");
 
@@ -304,10 +304,10 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	plist->set_header_height(24);
 
 	//
-	plist->set_use_own_imagelist(true);
+	plist->set_use_own_imagelist(false);
 	plist->set_shell_imagelist(&m_shell_imagelist);
 
-	plist->set_line_height(20);
+	plist->set_line_height(30);
 
 	//plist->set_column_text_align(0, HDF_CENTER);
 	//plist->set_column_text_align(0, HDF_CENTER);
@@ -351,7 +351,7 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 
 	//m_list.SetRedraw(TRUE);
 	SetWindowText(i2S(clock() - t0));
-	/*
+
 	//수동 테스트 데이터 추가
 	plist->add_item(_T("0.txt"));
 	plist->add_item(_T("1.mp4"));
@@ -366,9 +366,9 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	for (int i = 0; i < plist->size(); i++)
 		plist->SetItemData(i, i);
 
-	plist->set_text_color(0, col_score, Gdiplus::Color::Red);
-	plist->set_back_color(1, col_score, Gdiplus::Color::Pink);
-	*/
+	plist->set_text_color(0, col_no, Gdiplus::Color::Red);
+	plist->set_text_color(1, col_name, Gdiplus::Color::Pink);
+
 	//plist->set_item_color(2, 0, Gdiplus::Color::Red, Gdiplus::Color::Blue);
 	//plist->set_text_color(3, 0, Gdiplus::Color::Red);
 	//plist->set_back_color(3, 1, Gdiplus::Color::Red);
@@ -377,7 +377,7 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	//plist->set_back_color(5, 1, Gdiplus::Color::DeepPink);
 
 	plist->set_use_drag_and_drop();
-	SetTimer(timer_add_test_data, 10, NULL);
+	//SetTimer(timer_add_test_data, 10, NULL);
 }
 
 void Ctest_vtlistctrlexDlg::OnSysCommand(UINT nID, LPARAM lParam)
