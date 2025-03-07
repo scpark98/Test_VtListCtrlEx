@@ -301,9 +301,9 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	plist->set_font_name(theApp.GetProfileString(_T("list"), _T("font name"), _T("¸¼Àº °íµñ")));
 
 	plist->load_column_width(&theApp, _T("list name"));
-	plist->set_header_height(54);
-	plist->get_header_ctrl()->set_font_bold();
-	plist->get_header_ctrl()->use_header_separator(false);
+	plist->set_header_height(32);
+	//plist->get_header_ctrl()->set_font_bold();
+	//plist->get_header_ctrl()->use_header_separator(false);
 
 	plist->draw_top_line(true);// , Gdiplus::Color::Red);
 	//plist->draw_bottom_line(true);// , Gdiplus::Color::Blue);
