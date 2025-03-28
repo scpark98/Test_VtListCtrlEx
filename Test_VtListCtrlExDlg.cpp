@@ -293,6 +293,8 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 {
+	//plist->SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FLATSB);
+
 	plist->set_headings(_T("No,50;Name,150;Slogan,200;Score,100;Memo,200"));
 	//m_list.set_color_theme(CVtListCtrlEx::color_theme_dark_gray);
 	//m_list.set_line_height(theApp.GetProfileInt(_T("list name"), _T("line height"), 80));
