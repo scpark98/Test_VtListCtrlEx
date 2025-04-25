@@ -534,7 +534,7 @@ void Ctest_vtlistctrlexDlg::OnLvnEndlabeleditListShell0(NMHDR* pNMHDR, LRESULT* 
 		{
 			if (!MoveFile(oldfile, newfile))
 			{
-				get_last_error_string(true);
+				get_error_str(GetLastError());
 				m_list_shell0.set_text(item, subItem, oldtext);
 				return;
 			}
