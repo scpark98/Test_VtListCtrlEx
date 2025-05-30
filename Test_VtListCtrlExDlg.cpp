@@ -299,11 +299,11 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	//m_list.set_color_theme(CVtListCtrlEx::color_theme_dark_gray);
 	//m_list.set_line_height(theApp.GetProfileInt(_T("list name"), _T("line height"), 80));
 
-	plist->set_font_size(theApp.GetProfileInt(_T("list"), _T("font size"), 9));
-	plist->set_font_name(theApp.GetProfileString(_T("list"), _T("font name"), _T("¸¼Àº °íµñ")));
+	//plist->set_font_size(theApp.GetProfileInt(_T("list"), _T("font size"), 9));
+	//plist->set_font_name(theApp.GetProfileString(_T("list"), _T("font name"), _T("¸¼Àº °íµñ")));
 
 	plist->load_column_width(&theApp, _T("list name"));
-	plist->set_header_height(32);
+	plist->set_header_height(22);
 	//plist->get_header_ctrl()->set_font_bold();
 	//plist->get_header_ctrl()->use_header_separator(false);
 
@@ -314,7 +314,7 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	plist->set_use_own_imagelist(false);
 	plist->set_shell_imagelist(&m_shell_imagelist);
 
-	plist->set_line_height(30);
+	plist->set_line_height(20);
 
 
 	//plist->set_column_text_align(0, HDF_CENTER);
@@ -327,7 +327,7 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	plist->set_header_text_align(2, HDF_CENTER);
 	plist->set_header_text_align(3, HDF_LEFT);
 	*/
-	//m_list.set_column_data_type(list_score, CVtListCtrlEx::column_data_type_percentage_grid);
+	//plist->set_column_data_type(col_score, CVtListCtrlEx::column_data_type_percentage_grid);
 	plist->set_column_data_type(col_score, CVtListCtrlEx::column_data_type_progress);
 	plist->show_progress_text();
 	plist->set_back_alternate_color(true, Gdiplus::Color(242, 242, 242));
@@ -345,7 +345,7 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	bool make_invalidate = false;
 	//m_list.SetRedraw(FALSE);
 
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		int index = m_list.add_item(i2S(i) + RandomText::extension(true), -1, false, make_invalidate);
 		plist->set_text(index, col_name, RandomText::GetName(), make_invalidate);
@@ -368,7 +368,7 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	plist->add_item(_T("4.dat"));
 	plist->add_item(_T("5.ini"));
 
-	plist->set_text(0, col_score, _T("50%"));
+	plist->set_text(0, col_score, _T("50"));
 	plist->set_text(1, col_score, _T("fail"));
 
 	for (int i = 0; i < plist->size(); i++)
@@ -636,7 +636,8 @@ void Ctest_vtlistctrlexDlg::OnLvnKeydownListShell0(NMHDR* pNMHDR, LRESULT* pResu
 
 		if (dqSelected.size())
 		{
-			if (is_protected(m_list_shell0.get_path(dqSelected[0]), m_list_shell0.get_shell_imagelist(), 0))
+			//if (is_protected(m_list_shell0.get_path(dqSelected[0]), m_list_shell0.get_shell_imagelist(), 0))
+			m_list_shell0.get_shell_imagelist()->is_protected(0, m_list_shell0.get_path(dqSelected[0]));
 			{
 				TRACE(_T("protected\n"));
 				return;
@@ -740,7 +741,8 @@ void Ctest_vtlistctrlexDlg::OnNMDblclkListShell1(NMHDR* pNMHDR, LRESULT* pResult
 			int csidl = m_shell_imagelist.m_volume[0].get_csidl(m_list_shell1.get_path());
 			if (csidl == CSIDL_DRIVES)
 			{
-				new_path = convert_special_folder_to_real_path(m_list_shell1.get_text(index, CVtListCtrlEx::col_filename));// , m_shell_imagelist.m_volume[0].get_label_map());
+				//new_path = convert_special_folder_to_real_path(m_list_shell1.get_text(index, CVtListCtrlEx::col_filename));// , m_shell_imagelist.m_volume[0].get_label_map());
+				new_path = m_list_shell1.get_shell_imagelist()->convert_special_folder_to_real_path(0, m_list_shell1.get_text(index, CVtListCtrlEx::col_filename));// , m_shell_imagelist.m_volume[0].get_label_map());
 				m_list_shell1.set_path(new_path);
 				m_path1.set_path(new_path);
 				m_tree1.set_path(new_path);
