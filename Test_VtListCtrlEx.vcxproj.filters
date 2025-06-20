@@ -63,9 +63,6 @@
     <ClInclude Include="..\..\Common\CListCtrl\CVtListCtrlEx\HeaderCtrlEx.h">
       <Filter>Common\VtListCtrlEx</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\CListCtrl\CVtListCtrlEx\EditCell.h">
-      <Filter>Common\VtListCtrlEx</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Common\CStatic\PathCtrl\PathCtrl.h">
       <Filter>Common</Filter>
     </ClInclude>
@@ -135,9 +132,6 @@
       <Filter>Common\VtListCtrlEx</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\CListCtrl\CVtListCtrlEx\HeaderCtrlEx.cpp">
-      <Filter>Common\VtListCtrlEx</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\CListCtrl\CVtListCtrlEx\EditCell.cpp">
       <Filter>Common\VtListCtrlEx</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\CStatic\PathCtrl\PathCtrl.cpp">

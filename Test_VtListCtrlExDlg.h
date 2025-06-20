@@ -27,7 +27,7 @@ public:
 
 	CVtListCtrlEx*	m_plist_shell = NULL;
 
-	void			init_list(CVtListCtrlEx* plist);
+	void			init_list();
 
 	enum list_column
 	{

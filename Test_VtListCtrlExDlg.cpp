@@ -281,7 +281,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	//일반 ListCtrl의 초기설정
 	m_list.set_color_theme(color_theme);
-	init_list(&m_list);
+	init_list();
 
 	RestoreWindowPosition(&theApp, this);
 
@@ -291,49 +291,49 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
+void Ctest_vtlistctrlexDlg::init_list()
 {
-	//plist->SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FLATSB);
+	//m_list.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FLATSB);
 
-	plist->set_headings(_T("No,50;Name,150;Slogan,200;Score,100;Memo,200"));
+	m_list.set_headings(_T("No,50;Name,150;Slogan,200;Score,100;Memo,200"));
 	//m_list.set_color_theme(CVtListCtrlEx::color_theme_dark_gray);
 	//m_list.set_line_height(theApp.GetProfileInt(_T("list name"), _T("line height"), 80));
 
-	//plist->set_font_size(theApp.GetProfileInt(_T("list"), _T("font size"), 9));
-	//plist->set_font_name(theApp.GetProfileString(_T("list"), _T("font name"), _T("맑은 고딕")));
+	//m_list.set_font_size(theApp.GetProfileInt(_T("list"), _T("font size"), 9));
+	//m_list.set_font_name(theApp.GetProfileString(_T("list"), _T("font name"), _T("맑은 고딕")));
 
-	plist->load_column_width(&theApp, _T("list name"));
-	plist->set_header_height(22);
-	//plist->get_header_ctrl()->set_font_bold();
-	//plist->get_header_ctrl()->use_header_separator(false);
+	m_list.load_column_width(&theApp, _T("list name"));
+	m_list.set_header_height(22);
+	//m_list.get_header_ctrl()->set_font_bold();
+	//m_list.get_header_ctrl()->use_header_separator(false);
 
-	plist->draw_top_line(true);// , Gdiplus::Color::Red);
-	//plist->draw_bottom_line(true);// , Gdiplus::Color::Blue);
+	m_list.draw_top_line(true);// , Gdiplus::Color::Red);
+	//m_list.draw_bottom_line(true);// , Gdiplus::Color::Blue);
 
 	//
-	plist->set_use_own_imagelist(false);
-	plist->set_shell_imagelist(&m_shell_imagelist);
+	m_list.set_use_own_imagelist(false);
+	m_list.set_shell_imagelist(&m_shell_imagelist);
 
-	plist->set_line_height(20);
+	m_list.set_line_height(20);
 
 
-	//plist->set_column_text_align(0, HDF_CENTER);
-	//plist->set_column_text_align(0, HDF_CENTER);
-	plist->set_column_text_align(1, HDF_CENTER);
-	plist->set_column_text_align(2, HDF_RIGHT);
+	//m_list.set_column_text_align(0, HDF_CENTER);
+	//m_list.set_column_text_align(0, HDF_CENTER);
+	m_list.set_column_text_align(1, HDF_CENTER);
+	m_list.set_column_text_align(2, HDF_RIGHT);
 	/*
-	plist->set_header_text_align(0, HDF_CENTER);
-	plist->set_header_text_align(1, HDF_CENTER);
-	plist->set_header_text_align(2, HDF_CENTER);
-	plist->set_header_text_align(3, HDF_LEFT);
+	m_list.set_header_text_align(0, HDF_CENTER);
+	m_list.set_header_text_align(1, HDF_CENTER);
+	m_list.set_header_text_align(2, HDF_CENTER);
+	m_list.set_header_text_align(3, HDF_LEFT);
 	*/
-	//plist->set_column_data_type(col_score, CVtListCtrlEx::column_data_type_percentage_grid);
-	plist->set_column_data_type(col_score, CVtListCtrlEx::column_data_type_progress);
-	plist->show_progress_text();
-	plist->set_back_alternate_color(true, Gdiplus::Color(242, 242, 242));
-	plist->set_progress_color(Gdiplus::Color(79, 187, 255));
-	//plist->set_progress_text_color(Gdiplus::Color::Black);
-	plist->allow_edit();
+	//m_list.set_column_data_type(col_score, CVtListCtrlEx::column_data_type_percentage_grid);
+	m_list.set_column_data_type(col_score, CVtListCtrlEx::column_data_type_progress);
+	m_list.show_progress_text();
+	m_list.set_back_alternate_color(true, Gdiplus::Color(242, 242, 242));
+	m_list.set_progress_color(Gdiplus::Color(79, 187, 255));
+	//m_list.set_progress_text_color(Gdiplus::Color::Black);
+	m_list.allow_edit();
 
 	//RandomText를 이용한 테스트 데이터 추가
 	srand(time(NULL));
@@ -348,43 +348,46 @@ void Ctest_vtlistctrlexDlg::init_list(CVtListCtrlEx* plist)
 	for (int i = 0; i < 10; i++)
 	{
 		int index = m_list.add_item(i2S(i) + RandomText::extension(true), -1, false, make_invalidate);
-		plist->set_text(index, col_name, RandomText::GetName(), make_invalidate);
+		m_list.set_text(index, col_name, RandomText::GetName(), make_invalidate);
 		//m_list.set_text_color(index, 0, RGB(index, index, index));//random19937(RGB(0,0,0), RGB(255,255,255)));
-		plist->set_text(index, col_slogan, RandomText::GetSlogan(), make_invalidate);
+		m_list.set_text(index, col_slogan, RandomText::GetSlogan(), make_invalidate);
 		//m_list.set_text_color(index, index, RGB(indexi, 0, 0));//random19937(RGB(0,0,0), RGB(255,255,255)));
-		plist->set_text(index, col_score, i2S(random19937(0, 100)), make_invalidate);
+		m_list.set_text(index, col_score, i2S(random19937(0, 100)), make_invalidate);
 		//m_list.set_text_color(index, 2, RGB(0, 0, 255-index));//random19937(RGB(0,0,0), RGB(255,255,255)));
-		plist->set_text(index, col_memo, RandomText::GetName(), make_invalidate);
+		m_list.set_text(index, col_memo, RandomText::GetName(), make_invalidate);
 	}
 
 	//m_list.SetRedraw(TRUE);
 	SetWindowText(i2S(clock() - t0));
 
 	//수동 테스트 데이터 추가
-	plist->add_item(_T("0.txt"));
-	plist->add_item(_T("1.mp4"));
-	plist->add_item(_T("2.html"));
-	plist->add_item(_T("3.exe"));
-	plist->add_item(_T("4.dat"));
-	plist->add_item(_T("5.ini"));
+	//20250620 아래와 같이 add_item()을 하면 컬럼 정렬 시 에러가 발생하는 현상 발생.
+	//위에서 1000개를 add_item()해도 전혀 문제없으나 왜 여기서 add_item()을 하면 정렬시에 특정 항목의 text vector 크기가 0으로 변하는지...
+	//이 프로젝트에서 add_item() 한 것이 문제가 아니다. 다른 프로젝트에서도 
+	//m_list.add_item(_T("0.txt"));
+	//m_list.add_item(_T("1.mp4"));
+	//m_list.add_item(_T("2.html"));
+	//m_list.add_item(_T("3.exe"));
+	//m_list.add_item(_T("4.dat"));
+	//m_list.add_item(_T("5.ini"));
 
-	plist->set_text(0, col_score, _T("50"));
-	plist->set_text(1, col_score, _T("fail"));
+	m_list.set_text(0, col_score, _T("50"));
+	m_list.set_text(1, col_score, _T("fail"));
 
-	for (int i = 0; i < plist->size(); i++)
-		plist->SetItemData(i, i);
+	for (int i = 0; i < m_list.size(); i++)
+		m_list.SetItemData(i, i);
 
-	plist->set_text_color(0, col_no, Gdiplus::Color::Red);
-	plist->set_text_color(1, col_name, Gdiplus::Color::Pink);
+	m_list.set_text_color(0, col_no, Gdiplus::Color::Red);
+	m_list.set_text_color(1, col_name, Gdiplus::Color::Pink);
 
-	//plist->set_item_color(2, 0, Gdiplus::Color::Red, Gdiplus::Color::Blue);
-	//plist->set_text_color(3, 0, Gdiplus::Color::Red);
-	//plist->set_back_color(3, 1, Gdiplus::Color::Red);
-	//plist->set_item_color(4, 0, Gdiplus::Color::DeepPink, Gdiplus::Color::DodgerBlue);
-	//plist->set_text_color(5, 0, Gdiplus::Color::DeepPink);
-	//plist->set_back_color(5, 1, Gdiplus::Color::DeepPink);
+	//m_list.set_item_color(2, 0, Gdiplus::Color::Red, Gdiplus::Color::Blue);
+	//m_list.set_text_color(3, 0, Gdiplus::Color::Red);
+	//m_list.set_back_color(3, 1, Gdiplus::Color::Red);
+	//m_list.set_item_color(4, 0, Gdiplus::Color::DeepPink, Gdiplus::Color::DodgerBlue);
+	//m_list.set_text_color(5, 0, Gdiplus::Color::DeepPink);
+	//m_list.set_back_color(5, 1, Gdiplus::Color::DeepPink);
 
-	plist->set_use_drag_and_drop();
+	m_list.set_use_drag_and_drop();
 	//SetTimer(timer_add_test_data, 10, NULL);
 }
 
