@@ -361,15 +361,12 @@ void Ctest_vtlistctrlexDlg::init_list()
 	SetWindowText(i2S(clock() - t0));
 
 	//수동 테스트 데이터 추가
-	//20250620 아래와 같이 add_item()을 하면 컬럼 정렬 시 에러가 발생하는 현상 발생.
-	//위에서 1000개를 add_item()해도 전혀 문제없으나 왜 여기서 add_item()을 하면 정렬시에 특정 항목의 text vector 크기가 0으로 변하는지...
-	//이 프로젝트에서 add_item() 한 것이 문제가 아니다. 다른 프로젝트에서도 
-	//m_list.add_item(_T("0.txt"));
-	//m_list.add_item(_T("1.mp4"));
-	//m_list.add_item(_T("2.html"));
-	//m_list.add_item(_T("3.exe"));
-	//m_list.add_item(_T("4.dat"));
-	//m_list.add_item(_T("5.ini"));
+	m_list.add_item(_T("0.txt"));
+	m_list.add_item(_T("1.mp4"));
+	m_list.add_item(_T("2.html"));
+	m_list.add_item(_T("3.exe"));
+	m_list.add_item(_T("4.dat"));
+	m_list.add_item(_T("5.ini"));
 
 	m_list.set_text(0, col_score, _T("50"));
 	m_list.set_text(1, col_score, _T("fail"));
