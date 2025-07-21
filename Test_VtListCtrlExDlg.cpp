@@ -293,7 +293,9 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 void Ctest_vtlistctrlexDlg::init_list()
 {
-	//m_list.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FLATSB);
+	//m_list.set_use_virtual_list(false);
+
+	m_list.SetExtendedStyle(LVS_EX_CHECKBOXES | LVS_EX_AUTOCHECKSELECT | LVS_EX_GRIDLINES | LVS_EX_FLATSB);
 
 	m_list.set_headings(_T("No,50;Name,150;Slogan,200;Score,100;Memo,200"));
 	//m_list.set_color_theme(CVtListCtrlEx::color_theme_dark_gray);
@@ -367,6 +369,8 @@ void Ctest_vtlistctrlexDlg::init_list()
 	m_list.add_item(_T("3.exe"));
 	m_list.add_item(_T("4.dat"));
 	m_list.add_item(_T("5.ini"));
+
+	m_list.SetCheck(0, true);
 
 	m_list.set_text(0, col_score, _T("50"));
 	m_list.set_text(1, col_score, _T("fail"));
