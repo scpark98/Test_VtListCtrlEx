@@ -296,6 +296,7 @@ void Ctest_vtlistctrlexDlg::init_list()
 	//m_list.set_use_virtual_list(false);
 
 	m_list.SetExtendedStyle(LVS_EX_CHECKBOXES | LVS_EX_AUTOCHECKSELECT | LVS_EX_GRIDLINES | LVS_EX_FLATSB);
+	//m_list.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FLATSB);
 
 	m_list.set_headings(_T("No,50;Name,150;Slogan,200;Score,100;Memo,200"));
 	//m_list.set_color_theme(CVtListCtrlEx::color_theme_dark_gray);
@@ -435,7 +436,25 @@ void Ctest_vtlistctrlexDlg::OnPaint()
 
 		GetClientRect(rc);
 		CMemoryDC dc(&dc1, &rc, false);
+		Gdiplus::Graphics g(dc);
 
+		//g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);
+		//g.SetInterpolationMode(Gdiplus::InterpolationModeHighQualityBicubic);
+
+		g.SetPageUnit(Gdiplus::Unit::UnitMillimeter);
+
+		Gdiplus::Pen pen0(Gdiplus::Color::Blue, 0.1f);
+		Gdiplus::Pen pen1(Gdiplus::Color::Blue, 0.3f);
+		Gdiplus::Pen pen2(Gdiplus::Color::Blue, 0.5f);
+
+		draw_line(&dc, 0, 0, 200, 0, Gdiplus::Color::Red, 0.1f);
+		g.DrawLine(&pen0, 0, 5, 200, 5);
+
+		draw_line(&dc, 0, 10, 200, 10, Gdiplus::Color::Red, 0.3f);
+		g.DrawLine(&pen1, 0, 15, 200, 15);
+
+		draw_line(&dc, 0, 20, 200, 20, Gdiplus::Color::Red, 0.5f);
+		g.DrawLine(&pen2, 0, 25, 200, 25);
 		//dc.FillSolidRect(rc, RGB(64, 64, 64));// ::GetSysColor(COLOR_3DFACE));
 	}
 }
