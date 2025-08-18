@@ -145,7 +145,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_resize.Create(this);
 
 	m_resize.Add(IDC_TREE, 0, 0, 0, 100);
-	//m_resize.Add(IDC_LIST, 0, 0, 100, 100);
+	m_resize.Add(IDC_LIST, 0, 0, 0, 100);
 
 	m_resize.Add(IDC_PATH0, 0, 0, 50, 0);
 	m_resize.Add(IDC_TREE0, 0, 0, 10, 100);
@@ -172,7 +172,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	//shellimagelist를 초기화 한 후 트리, 리스트에서 공통으로 사용한다.
 	//m_shell_imagelist.Initialize();
 
-	CString default_path = _T("c:\\");
+	CString default_path = _T("z:\\");
 
 	logWrite(_T("4"));
 
@@ -295,29 +295,29 @@ void Ctest_vtlistctrlexDlg::init_list()
 {
 	//m_list.set_use_virtual_list(false);
 
-	m_list.SetExtendedStyle(LVS_EX_CHECKBOXES | LVS_EX_AUTOCHECKSELECT | LVS_EX_GRIDLINES | LVS_EX_FLATSB);
+	m_list.SetExtendedStyle(LVS_EX_CHECKBOXES | LVS_EX_FULLROWSELECT);// | LVS_EX_GRIDLINES);
+	//m_list.SetExtendedStyle(LVS_EX_CHECKBOXES | LVS_EX_AUTOCHECKSELECT | LVS_EX_GRIDLINES | LVS_EX_FLATSB);
 	//m_list.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FLATSB);
 
 	m_list.set_headings(_T("No,50;Name,150;Slogan,200;Score,100;Memo,200"));
 	//m_list.set_color_theme(CVtListCtrlEx::color_theme_dark_gray);
 	//m_list.set_line_height(theApp.GetProfileInt(_T("list name"), _T("line height"), 80));
 
-	//m_list.set_font_size(theApp.GetProfileInt(_T("list"), _T("font size"), 9));
-	//m_list.set_font_name(theApp.GetProfileString(_T("list"), _T("font name"), _T("맑은 고딕")));
+	m_list.set_font_size(theApp.GetProfileInt(_T("list"), _T("font size"), 9));
+	m_list.set_font_name(theApp.GetProfileString(_T("list"), _T("font name"), _T("맑은 고딕")));
 
 	m_list.load_column_width(&theApp, _T("list name"));
-	m_list.set_header_height(22);
+	m_list.set_header_height(32);
+	m_list.set_line_height(24);
 	//m_list.get_header_ctrl()->set_font_bold();
 	//m_list.get_header_ctrl()->use_header_separator(false);
 
-	m_list.draw_top_line(true);// , Gdiplus::Color::Red);
+	//m_list.draw_top_line(true);// , Gdiplus::Color::Red);
 	//m_list.draw_bottom_line(true);// , Gdiplus::Color::Blue);
 
 	//
 	m_list.set_use_own_imagelist(false);
 	m_list.set_shell_imagelist(&m_shell_imagelist);
-
-	m_list.set_line_height(20);
 
 
 	//m_list.set_column_text_align(0, HDF_CENTER);
@@ -438,6 +438,7 @@ void Ctest_vtlistctrlexDlg::OnPaint()
 		CMemoryDC dc(&dc1, &rc, false);
 		Gdiplus::Graphics g(dc);
 
+		/*DrawLine()의 width 테스트
 		//g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);
 		//g.SetInterpolationMode(Gdiplus::InterpolationModeHighQualityBicubic);
 
@@ -456,6 +457,7 @@ void Ctest_vtlistctrlexDlg::OnPaint()
 		draw_line(&dc, 0, 20, 200, 20, Gdiplus::Color::Red, 0.5f);
 		g.DrawLine(&pen2, 0, 25, 200, 25);
 		//dc.FillSolidRect(rc, RGB(64, 64, 64));// ::GetSysColor(COLOR_3DFACE));
+		*/
 	}
 }
 
