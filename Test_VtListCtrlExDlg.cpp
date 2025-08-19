@@ -245,7 +245,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_list_shell0.set_use_drag_and_drop();
 	m_list_shell0.load_column_width(&theApp, _T("shell list0"));
 	m_list_shell0.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
-	m_list_shell0.set_color_theme(color_theme);
+	//m_list_shell0.set_color_theme(CSCColorTheme::color_theme_default);// color_theme);
 
 	logWrite(_T("8"));
 
@@ -254,7 +254,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_list_shell1.set_use_drag_and_drop();
 	m_list_shell1.load_column_width(&theApp, _T("shell list1"));
 	m_list_shell1.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
-	m_list_shell1.set_color_theme(color_theme);
+	//m_list_shell1.set_color_theme(color_theme);
 
 	logWrite(_T("9"));
 	m_path0.set_shell_imagelist(&m_shell_imagelist, true);
