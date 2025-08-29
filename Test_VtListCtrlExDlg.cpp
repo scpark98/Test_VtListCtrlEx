@@ -145,15 +145,26 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_resize.Create(this);
 
 	m_resize.Add(IDC_TREE, 0, 0, 0, 100);
-	m_resize.Add(IDC_LIST, 0, 0, 0, 100);
+	m_resize.Add(IDC_LIST, 0, 0, 100, 100);
 
 	m_resize.Add(IDC_PATH0, 0, 0, 50, 0);
-	m_resize.Add(IDC_TREE0, 0, 0, 10, 100);
-	m_resize.Add(IDC_LIST_SHELL0, 10, 0, 40, 100);
-
 	m_resize.Add(IDC_PATH1, 50, 0, 50, 0);
-	m_resize.Add(IDC_TREE1, 50, 0, 10, 100);
-	m_resize.Add(IDC_LIST_SHELL1, 60, 0, 40, 100);
+
+	if (false)
+	{
+		m_resize.Add(IDC_TREE0, 0, 0, 10, 100);
+		m_resize.Add(IDC_LIST_SHELL0, 10, 0, 40, 100);
+
+		m_resize.Add(IDC_TREE1, 50, 0, 10, 100);
+		m_resize.Add(IDC_LIST_SHELL1, 60, 0, 40, 100);
+	}
+	else
+	{
+		m_resize.Add(IDC_TREE0, 100, 0, 0, 100);
+		m_resize.Add(IDC_LIST_SHELL0, 100, 0, 0, 100);
+		m_resize.Add(IDC_TREE1, 100, 0, 0, 100);
+		m_resize.Add(IDC_LIST_SHELL1, 100, 0, 00, 100);
+	}
 
 	std::deque<CString> dq_color_theme = CSCColorTheme::get_color_theme_list();
 	for (auto theme_name : dq_color_theme)
@@ -307,7 +318,7 @@ void Ctest_vtlistctrlexDlg::init_list()
 	m_list.set_font_name(theApp.GetProfileString(_T("list"), _T("font name"), _T("¸¼Àº °íµñ")));
 
 	m_list.load_column_width(&theApp, _T("list name"));
-	m_list.set_header_height(32);
+	m_list.set_header_height(24);
 	m_list.set_line_height(24);
 	//m_list.get_header_ctrl()->set_font_bold();
 	//m_list.get_header_ctrl()->use_header_separator(false);
@@ -380,6 +391,7 @@ void Ctest_vtlistctrlexDlg::init_list()
 		m_list.SetItemData(i, i);
 
 	m_list.set_text_color(0, col_no, Gdiplus::Color::Red);
+	m_list.set_back_color(0, col_no, Gdiplus::Color::RoyalBlue);
 	m_list.set_text_color(1, col_name, Gdiplus::Color::Pink);
 
 	//m_list.set_item_color(2, 0, Gdiplus::Color::Red, Gdiplus::Color::Blue);
