@@ -1116,6 +1116,6 @@ void Ctest_vtlistctrlexDlg::OnLvnItemchangedList(NMHDR* pNMHDR, LRESULT* pResult
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 
-	TRACE(_T("item = %d, data = %d\n"), pNMLV->iItem, m_list.GetItemData(pNMLV->iItem));
+	//TRACE(_T("item = %d, data = %d\n"), pNMLV->iItem, m_list.GetItemData(pNMLV->iItem));
 	*pResult = 0;
 }
