@@ -166,7 +166,8 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 		m_resize.Add(IDC_LIST_SHELL1, 100, 0, 00, 100);
 	}
 
-	std::deque<CString> dq_color_theme = CSCColorTheme::get_color_theme_list();
+	std::deque<CString> dq_color_theme;
+	CSCColorTheme::get_color_theme_list(dq_color_theme);
 	for (auto theme_name : dq_color_theme)
 		m_combo_color_theme.AddString(theme_name);
 
@@ -254,7 +255,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_list_shell0.set_as_shell_listctrl(&m_shell_imagelist, true);
 	m_list_shell0.set_path(default_path);
 	m_list_shell0.set_use_drag_and_drop();
-	m_list_shell0.load_column_width(&theApp, _T("shell list0"));
+	m_list_shell0.restore_column_width(&theApp, _T("shell list0"));
 	m_list_shell0.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
 	//m_list_shell0.set_color_theme(CSCColorTheme::color_theme_default);// color_theme);
 
@@ -263,7 +264,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_list_shell1.set_as_shell_listctrl(&m_shell_imagelist, true);
 	m_list_shell1.set_path(default_path);
 	m_list_shell1.set_use_drag_and_drop();
-	m_list_shell1.load_column_width(&theApp, _T("shell list1"));
+	m_list_shell1.restore_column_width(&theApp, _T("shell list1"));
 	m_list_shell1.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
 	//m_list_shell1.set_color_theme(color_theme);
 
@@ -317,7 +318,7 @@ void Ctest_vtlistctrlexDlg::init_list()
 	m_list.set_font_size(theApp.GetProfileInt(_T("list"), _T("font size"), 9));
 	m_list.set_font_name(theApp.GetProfileString(_T("list"), _T("font name"), _T("¸¼Àº °íµñ")));
 
-	m_list.load_column_width(&theApp, _T("list name"));
+	m_list.restore_column_width(&theApp, _T("list name"));
 	m_list.set_header_height(24);
 	m_list.set_line_height(24);
 	//m_list.get_header_ctrl()->set_font_bold();
