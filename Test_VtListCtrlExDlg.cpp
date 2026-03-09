@@ -147,15 +147,8 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_resize.Add(IDC_PATH0, 0, 0, 50, 0);
 	m_resize.Add(IDC_PATH1, 50, 0, 50, 0);
 
+	//왼쪽 리스트를 resize할 경우는 true로, 오른쪽 탐색기 트리와 리스트를 resize하여 테스트 할 경우는 false로 준다.
 	if (true)
-	{
-		m_resize.Add(IDC_TREE0, 0, 0, 10, 100);
-		m_resize.Add(IDC_LIST_SHELL0, 10, 0, 40, 100);
-
-		m_resize.Add(IDC_TREE1, 50, 0, 10, 100);
-		m_resize.Add(IDC_LIST_SHELL1, 60, 0, 40, 100);
-	}
-	else
 	{
 		m_resize.Add(IDC_TREE, 0, 0, 0, 100);
 		m_resize.Add(IDC_LIST, 0, 0, 100, 100);
@@ -164,6 +157,14 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 		m_resize.Add(IDC_LIST_SHELL0, 100, 0, 0, 100);
 		m_resize.Add(IDC_TREE1, 100, 0, 0, 100);
 		m_resize.Add(IDC_LIST_SHELL1, 100, 0, 00, 100);
+	}
+	else
+	{
+		m_resize.Add(IDC_TREE0, 0, 0, 10, 100);
+		m_resize.Add(IDC_LIST_SHELL0, 10, 0, 40, 100);
+
+		m_resize.Add(IDC_TREE1, 50, 0, 10, 100);
+		m_resize.Add(IDC_LIST_SHELL1, 60, 0, 40, 100);
 	}
 
 	std::deque<CString> dq_color_theme;
@@ -346,8 +347,8 @@ void Ctest_vtlistctrlexDlg::init_list()
 	//m_list.set_column_data_type(col_score, CVtListCtrlEx::column_data_type_percentage_grid);
 	m_list.set_column_data_type(col_score, CVtListCtrlEx::column_data_type_progress);
 	m_list.show_progress_text();
-	m_list.set_back_alternate_color(true, Gdiplus::Color(242, 242, 242));
-	m_list.set_progress_color(Gdiplus::Color(79, 187, 255));
+	//m_list.set_back_alternate_color(true, Gdiplus::Color(242, 242, 242));
+	m_list.set_progress_color(Gdiplus::Color(255, 187, 255));
 	//m_list.set_progress_text_color(Gdiplus::Color::Black);
 	m_list.allow_edit();
 
