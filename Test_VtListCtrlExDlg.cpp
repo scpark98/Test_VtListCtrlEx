@@ -228,6 +228,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_tree0.set_color_theme(color_theme);
 	m_tree0.set_path(default_path);
 	m_tree0.set_use_popup_menu();
+
 	m_tree1.set_as_shell_treectrl(&m_shell_imagelist, true);
 	m_tree1.set_use_drag_and_drop(true);
 	m_tree1.set_color_theme(color_theme);
@@ -257,7 +258,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_list_shell0.set_use_drag_and_drop();
 	m_list_shell0.restore_column_width(&theApp, _T("shell list0"));
 	m_list_shell0.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
-	//m_list_shell0.set_color_theme(CSCColorTheme::color_theme_default);// color_theme);
+	m_list_shell0.set_color_theme(color_theme);
 
 	logWrite(_T("8"));
 
@@ -266,7 +267,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_list_shell1.set_use_drag_and_drop();
 	m_list_shell1.restore_column_width(&theApp, _T("shell list1"));
 	m_list_shell1.add_drag_images(IDB_DRAG_ONE_FILE, IDB_DRAG_MULTI_FILES);
-	//m_list_shell1.set_color_theme(color_theme);
+	m_list_shell1.set_color_theme(color_theme);
 
 	logWrite(_T("9"));
 	m_path0.set_shell_imagelist(&m_shell_imagelist, true);
@@ -982,14 +983,14 @@ void Ctest_vtlistctrlexDlg::OnCbnSelchangeComboColorTheme()
 
 	theApp.WriteProfileInt(_T("setting"), _T("color theme"), index);
 
-	m_tree.set_color_theme(index);
-	m_list.set_color_theme(index);
+	m_tree.set_color_theme(index, true);
+	m_list.set_color_theme(index, true);
 
 	m_tree0.set_color_theme(index);
-	m_list_shell0.set_color_theme(index);
+	m_list_shell0.set_color_theme(index, true);
 
 	m_tree1.set_color_theme(index);
-	m_list_shell1.set_color_theme(index);
+	m_list_shell1.set_color_theme(index, true);
 }
 
 
