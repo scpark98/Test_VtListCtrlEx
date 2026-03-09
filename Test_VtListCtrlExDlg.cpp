@@ -144,13 +144,10 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 
 	m_resize.Create(this);
 
-	m_resize.Add(IDC_TREE, 0, 0, 0, 100);
-	m_resize.Add(IDC_LIST, 0, 0, 100, 100);
-
 	m_resize.Add(IDC_PATH0, 0, 0, 50, 0);
 	m_resize.Add(IDC_PATH1, 50, 0, 50, 0);
 
-	if (false)
+	if (true)
 	{
 		m_resize.Add(IDC_TREE0, 0, 0, 10, 100);
 		m_resize.Add(IDC_LIST_SHELL0, 10, 0, 40, 100);
@@ -160,6 +157,9 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	}
 	else
 	{
+		m_resize.Add(IDC_TREE, 0, 0, 0, 100);
+		m_resize.Add(IDC_LIST, 0, 0, 100, 100);
+
 		m_resize.Add(IDC_TREE0, 100, 0, 0, 100);
 		m_resize.Add(IDC_LIST_SHELL0, 100, 0, 0, 100);
 		m_resize.Add(IDC_TREE1, 100, 0, 0, 100);
