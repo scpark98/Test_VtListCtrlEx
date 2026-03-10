@@ -348,7 +348,7 @@ void Ctest_vtlistctrlexDlg::init_list()
 	m_list.set_column_data_type(col_score, CVtListCtrlEx::column_data_type_progress);
 	m_list.show_progress_text();
 	//m_list.set_back_alternate_color(true, Gdiplus::Color(242, 242, 242));
-	m_list.set_progress_color(Gdiplus::Color(255, 187, 255));
+	//m_list.set_progress_color(Gdiplus::Color(255, 187, 255));
 	//m_list.set_progress_text_color(Gdiplus::Color::Black);
 	m_list.allow_edit();
 
