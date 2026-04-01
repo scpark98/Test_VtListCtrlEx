@@ -148,7 +148,7 @@ BOOL Ctest_vtlistctrlexDlg::OnInitDialog()
 	m_resize.Add(IDC_PATH1, 50, 0, 50, 0);
 
 	//왼쪽 리스트를 resize할 경우는 true로, 오른쪽 탐색기 트리와 리스트를 resize하여 테스트 할 경우는 false로 준다.
-	if (true)
+	if (false)
 	{
 		m_resize.Add(IDC_TREE, 0, 0, 0, 100);
 		m_resize.Add(IDC_LIST, 0, 0, 100, 100);
